@@ -13,18 +13,17 @@
 
 <script>
 import TableMap from "@/components/TableMap.vue";
-
-const _tables = [
-  { position: { x: 10, y: 10 }, isSelected: false, isOpen: false, name: "1" },
-  { position: { x: 100, y: 150 }, isSelected: false, isOpen: true, name: "2" }
-];
+import { getTables } from "@/services/tables.js";
 
 export default {
   components: { TableMap },
   data() {
     return {
-      tables: _tables
+      tables: []
     };
+  },
+  async created() {
+    this.tables = await getTables();
   },
   methods: {
     onSelectTable({ name }) {
