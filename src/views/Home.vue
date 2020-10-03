@@ -4,7 +4,6 @@
       class="w-3/5 h-full"
       :tables="tables"
       @select-table="onSelectTable"
-      @click="onSelectTable({})"
     >
     </table-map>
     <div class="w-2/5 h-full bg-gray-200"></div>
