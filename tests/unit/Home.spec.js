@@ -26,7 +26,7 @@ jest.mock("@/services/tables.js", () => {
 });
 
 describe("Home", () => {
-  it("should has only one select table", async () => {
+  it("should has only one select table at a time", async () => {
     const home = mount(Home, {});
     await home.vm.$nextTick();
 
