@@ -6,35 +6,47 @@
       @select-table="onSelectTable"
     >
     </table-map>
-    <div class="w-2/5 h-full bg-gray-200"></div>
+    <div class="w-2/5 h-full bg-gray-200">
+      <sidebar
+        :table="selectedTable"
+        @open-table="onOpenTable"
+        @close-table="onCloseTable"
+      >
+      </sidebar>
+    </div>
   </main>
 </template>
 
 <script>
+import { onMounted } from "vue";
+
 import TableMap from "@/components/TableMap.vue";
-import { getTables } from "@/services/tables.js";
+import Sidebar from "@/components/Sidebar/Sidebar.vue";
+
+import { useTables } from "@/composables/useTables.js";
 
 export default {
-  components: { TableMap },
-  data() {
-    return {
-      tables: []
-    };
-  },
-  async created() {
-    this.tables = await getTables();
-  },
-  methods: {
-    onSelectTable({ name }) {
-      this.tables = this.tables.map(table => {
-        const isSelected = table.name === name ? !table.isSelected : false;
+  components: { TableMap, Sidebar },
+  setup() {
+    const {
+      tables,
+      selectedTable,
+      openSelectedTable,
+      closeSelectedTable,
+      fetchTables,
+      selectTable
+    } = useTables();
 
-        return {
-          ...table,
-          isSelected
-        };
-      });
-    }
+    onMounted(fetchTables);
+
+    return {
+      tables,
+      selectedTable,
+      selectTable,
+      onSelectTable: selectTable,
+      onOpenTable: openSelectedTable,
+      onCloseTable: closeSelectedTable
+    };
   }
 };
 </script>
