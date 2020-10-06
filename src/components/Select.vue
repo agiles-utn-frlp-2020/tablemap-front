@@ -109,8 +109,8 @@ export default {
   },
 
   methods: {
-    isSelected(product_id) {
-      return this.modelValue.id === product_id;
+    isSelected(productId) {
+      return this.modelValue.id === productId;
     },
 
     open() {
