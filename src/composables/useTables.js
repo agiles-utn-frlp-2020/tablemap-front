@@ -14,7 +14,7 @@ export function useTables() {
     tables.value = await tableServices.getTables();
   };
 
-  const selectTable = ({ name }) => {
+  const selectTable = ({ name } = {}) => {
     tables.value = tables.value.map(table => {
       const isSelected = table.name === name ? !table.isSelected : false;
 
