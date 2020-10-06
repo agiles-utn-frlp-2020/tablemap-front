@@ -21,7 +21,9 @@
     </div>
 
     <div>
-      <t-button @click="$parent.$emit('close-table')">Cerrar mesa</t-button>
+      <t-button data-test-id="close" @click="$parent.$emit('close-table')"
+        >Cerrar mesa</t-button
+      >
       <!-- TODO: agregar precio final -->
     </div>
   </div>

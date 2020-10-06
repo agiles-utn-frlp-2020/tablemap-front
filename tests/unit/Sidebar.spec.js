@@ -1,6 +1,31 @@
 import { mount } from "@vue/test-utils";
 import Sidebar from "@/components/Sidebar/Sidebar.vue";
 
+jest.mock("@/services/products.js", () => {
+  const PRODUCTS = [
+    {
+      id: 1,
+      title: "Cerveza IPA",
+      price: 100,
+      image:
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Helles_im_Glas-Helles_%28pale_beer%29.jpg/150px-Helles_im_Glas-Helles_%28pale_beer%29.jpg"
+    },
+    {
+      id: 2,
+      title: "Cerveza SCOTCH",
+      price: 100,
+      image:
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Helles_im_Glas-Helles_%28pale_beer%29.jpg/150px-Helles_im_Glas-Helles_%28pale_beer%29.jpg"
+    }
+  ];
+
+  return {
+    getProducts() {
+      return Promise.resolve(PRODUCTS);
+    }
+  };
+});
+
 describe("Sidebar", () => {
   it("Should renders the correct button if selected table is closed", () => {
     const props = {
@@ -32,7 +57,7 @@ describe("Sidebar", () => {
     };
 
     const wrapper = mount(Sidebar, { props });
-    const button = wrapper.find("button");
+    const button = wrapper.find("button[data-test-id=close]");
 
     await button.trigger("click");
     const event = wrapper.emitted()["close-table"];
@@ -46,7 +71,7 @@ describe("Sidebar", () => {
     };
 
     const wrapper = mount(Sidebar, { props });
-    const button = wrapper.find("button");
+    const button = wrapper.find("button[data-test-id=close]");
     expect(button.text()).toBe("Cerrar mesa");
   });
 
