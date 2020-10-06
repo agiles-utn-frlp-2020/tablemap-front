@@ -1,7 +1,7 @@
-import { BASE_URL } from "./constants.js";
+import { API_URL } from "./constants.js";
 
 export function getTables() {
-  return fetch(`${BASE_URL}/api/v1/tables`)
+  return fetch(`${API_URL}/tables`)
     .then(resp => resp.json())
     .then(tables => {
       return tables.map(table => {
