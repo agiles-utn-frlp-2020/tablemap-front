@@ -25,10 +25,30 @@ export function useTables() {
     });
   };
 
+  const toggleSelectedTable = force => {
+    tables.value = tables.value.map(table => {
+      if (!table.isSelected) {
+        return table;
+      }
+
+      let isOpen = force === undefined ? !table.isOpen : force;
+
+      return {
+        ...table,
+        isOpen
+      };
+    });
+  };
+
+  const openSelectedTable = toggleSelectedTable.bind(null, true);
+  const closeSelectedTable = toggleSelectedTable.bind(null, false);
+
   return {
     tables,
     selectedTable,
     fetchTables,
-    selectTable
+    selectTable,
+    openSelectedTable,
+    closeSelectedTable
   };
 }

@@ -6,7 +6,14 @@
       @select-table="onSelectTable"
     >
     </table-map>
-    <div class="w-2/5 h-full bg-gray-200"></div>
+    <div class="w-2/5 h-full bg-gray-200">
+      <sidebar
+        :table="selectedTable"
+        @open-table="onOpenTable"
+        @close-table="onCloseTable"
+      >
+      </sidebar>
+    </div>
   </main>
 </template>
 
@@ -14,13 +21,21 @@
 import { onMounted } from "vue";
 
 import TableMap from "@/components/TableMap.vue";
+import Sidebar from "@/components/Sidebar/Sidebar.vue";
 
 import { useTables } from "@/composables/useTables.js";
 
 export default {
-  components: { TableMap },
+  components: { TableMap, Sidebar },
   setup() {
-    const { tables, selectedTable, fetchTables, selectTable } = useTables();
+    const {
+      tables,
+      selectedTable,
+      openSelectedTable,
+      closeSelectedTable,
+      fetchTables,
+      selectTable
+    } = useTables();
 
     onMounted(fetchTables);
 
@@ -28,7 +43,9 @@ export default {
       tables,
       selectedTable,
       selectTable,
-      onSelectTable: selectTable
+      onSelectTable: selectTable,
+      onOpenTable: openSelectedTable,
+      onCloseTable: closeSelectedTable
     };
   }
 };
