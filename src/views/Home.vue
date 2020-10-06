@@ -4,52 +4,49 @@
       class="w-3/5 h-full"
       :tables="tables"
       @select-table="onSelectTable"
-      @click="onSelectTable({})"
     >
     </table-map>
     <div class="w-2/5 h-full bg-gray-200">
-      <Select v-model="selected" :options="products">
-        Products
-      </Select>
+      <sidebar
+        :table="selectedTable"
+        @open-table="onOpenTable"
+        @close-table="onCloseTable"
+      >
+      </sidebar>
     </div>
   </main>
 </template>
 
 <script>
-import TableMap from "@/components/TableMap.vue";
-import Select from "@/components/Select.vue";
+import { onMounted } from "vue";
 
-import { getTables } from "@/services/tables.js";
-import { getProducts } from "@/services/products.js";
+import TableMap from "@/components/TableMap.vue";
+import Sidebar from "@/components/Sidebar/Sidebar.vue";
+
+import { useTables } from "@/composables/useTables.js";
 
 export default {
-  components: { TableMap, Select },
-  data() {
-    return {
-      tables: [],
-      products: [],
-      selected: {
-        image: "",
-        title: ""
-      }
-    };
-  },
-  async created() {
-    this.tables = await getTables();
-    this.products = await getProducts();
-    this.selected = this.products[0]; // Show the first product as default
-  },
-  methods: {
-    onSelectTable({ name }) {
-      this.tables = this.tables.map(table => {
-        const isSelected = table.name === name ? !table.isSelected : false;
+  components: { TableMap, Sidebar },
+  setup() {
+    const {
+      tables,
+      selectedTable,
+      openSelectedTable,
+      closeSelectedTable,
+      fetchTables,
+      selectTable
+    } = useTables();
 
-        return {
-          ...table,
-          isSelected
-        };
-      });
-    }
+    onMounted(fetchTables);
+
+    return {
+      tables,
+      selectedTable,
+      selectTable,
+      onSelectTable: selectTable,
+      onOpenTable: openSelectedTable,
+      onCloseTable: closeSelectedTable
+    };
   }
 };
 </script>
