@@ -11,30 +11,25 @@
 </template>
 
 <script>
+import { onMounted } from "vue";
+
 import TableMap from "@/components/TableMap.vue";
-import { getTables } from "@/services/tables.js";
+
+import { useTables } from "@/composables/useTables.js";
 
 export default {
   components: { TableMap },
-  data() {
-    return {
-      tables: []
-    };
-  },
-  async created() {
-    this.tables = await getTables();
-  },
-  methods: {
-    onSelectTable({ name }) {
-      this.tables = this.tables.map(table => {
-        const isSelected = table.name === name ? !table.isSelected : false;
+  setup() {
+    const { tables, selectedTable, fetchTables, selectTable } = useTables();
 
-        return {
-          ...table,
-          isSelected
-        };
-      });
-    }
+    onMounted(fetchTables);
+
+    return {
+      tables,
+      selectedTable,
+      selectTable,
+      onSelectTable: selectTable
+    };
   }
 };
 </script>
