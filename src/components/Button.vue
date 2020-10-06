@@ -10,7 +10,7 @@ export default {
   computed: {
     classes() {
       return this.variant === "outline"
-        ? "border-2 border-indigo-600 button--outline"
+        ? "bg-white border-2 border-indigo-600 button--outline"
         : "bg-indigo-600 text-white py-3";
     }
   }
