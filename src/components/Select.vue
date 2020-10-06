@@ -1,23 +1,23 @@
 <template>
   <div class="space-y-1">
     <label class="block text-sm leading-5 font-medium text-gray-700">
-      Products
+      <slot></slot>
     </label>
 
     <div class="relative">
       <span class="inline-block w-full rounded-md shadow-sm">
         <button
           type="button"
-          @click="openDropdown"
+          @click="open"
           class="cursor-pointer relative w-full rounded-md border border-gray-300 bg-white pl-3 pr-10 py-2 text-left focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition ease-in-out duration-150 sm:text-sm sm:leading-5"
         >
           <div class="flex items-center space-x-3">
             <img
-              src="https://cdn2.vectorstock.com/i/1000x1000/73/86/mug-with-beer-icon-cartoon-style-vector-24217386.jpg"
+              :src="modelValue.image"
               class="flex-shrink-0 h-6 w-6 rounded-full"
             />
             <span class="block truncate">
-              {{ selected }}
+              {{ modelValue.title }}
             </span>
           </div>
 
@@ -53,29 +53,29 @@
         >
           <li
             tabindex="0"
-            v-for="(elem, index) in data"
-            :key="index"
-            @click="select(elem)"
+            v-for="product in options"
+            :key="product.id"
+            @click="select(product)"
             role="option"
-            class="text-gray-900 cursor-default select-none relative py-2 pl-3 pr-9  cursor-pointer hover:text-white hover:bg-indigo-600 focus:outline-none focus:text-white focus:bg-indigo-600"
+            class="text-gray-900 cursor-default select-none relative py-2 pl-3 pr-9 cursor-pointer hover:text-white hover:bg-indigo-600 focus:outline-none focus:text-white focus:bg-indigo-600"
           >
             <div class="flex items-center space-x-3">
               <img
-                src="https://cdn2.vectorstock.com/i/1000x1000/73/86/mug-with-beer-icon-cartoon-style-vector-24217386.jpg"
+                :src="product.image"
                 class="flex-shrink-0 h-6 w-6 rounded-full"
               />
               <span
                 class="block truncate"
                 v-bind:class="
-                  isSelected(elem) ? 'font-semibold' : 'font-normal'
+                  isSelected(product.id) ? 'font-semibold' : 'font-normal'
                 "
               >
-                {{ elem }}
+                {{ product.title }}
               </span>
             </div>
 
             <span
-              v-show="isSelected(elem)"
+              v-show="isSelected(product.id)"
               class="absolute inset-y-0 right-0 flex items-center pr-4"
             >
               <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -95,29 +95,35 @@
 
 <script>
 export default {
-  name: "Dropdown",
+  name: "Select",
+
   props: {
-    data: Array,
-    selected: String
+    modelValue: Object,
+    options: Array
   },
+
   data() {
     return {
       isOpen: false
     };
   },
+
   methods: {
-    isSelected(value) {
-      return this.selected === value;
+    isSelected(product_id) {
+      return this.modelValue.id === product_id;
     },
-    openDropdown() {
+
+    open() {
       this.isOpen = true;
     },
-    select(value) {
+
+    select(product) {
       this.isOpen = false;
-      this.$emit("selected", value);
+      this.$emit("update:modelValue", product);
     }
+
     // TODO: Close when click outside
-    // closeDropdown() {
+    // closeSelect() {
     //   this.isOpen = false;
     // },
   }

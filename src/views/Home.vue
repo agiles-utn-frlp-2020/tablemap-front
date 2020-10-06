@@ -8,29 +8,36 @@
     >
     </table-map>
     <div class="w-2/5 h-full bg-gray-200">
-      <Dropdown :data="beers" :selected="selected" @selected="onSelected">
-      </Dropdown>
+      <Select v-model="selected" :options="products">
+        Products
+      </Select>
     </div>
   </main>
 </template>
 
 <script>
 import TableMap from "@/components/TableMap.vue";
-import Dropdown from "@/components/Dropdown.vue";
+import Select from "@/components/Select.vue";
 
 import { getTables } from "@/services/tables.js";
+import { getProducts } from "@/services/products.js";
 
 export default {
-  components: { TableMap, Dropdown },
+  components: { TableMap, Select },
   data() {
     return {
       tables: [],
-      selected: "IPA",
-      beers: ["IPA", "PALE ALE", "STOUT", "PORTER", "HONEY"]
+      products: [],
+      selected: {
+        image: "",
+        title: ""
+      }
     };
   },
   async created() {
     this.tables = await getTables();
+    this.products = await getProducts();
+    this.selected = this.products[0]; // Show the first product as default
   },
   methods: {
     onSelectTable({ name }) {
@@ -42,9 +49,6 @@ export default {
           isSelected
         };
       });
-    },
-    onSelected(value) {
-      this.selected = value;
     }
   }
 };
