@@ -5,14 +5,12 @@ jest.mock("@/services/tables.js", () => {
   const TABLES = [
     {
       position: { x: 10, y: 20 },
-      isSelected: false,
       isOpen: false,
       name: "Table test 1"
     },
 
     {
       position: { x: 300, y: 200 },
-      isSelected: false,
       isOpen: false,
       name: "Table test 2"
     }
