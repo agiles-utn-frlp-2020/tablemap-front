@@ -30,5 +30,15 @@ export default {
   h2 {
     @apply text-xl;
   }
+
+  input,
+  .input {
+    @apply border;
+
+    &:focus {
+      @apply border-primary-400;
+      @apply outline-none;
+    }
+  }
 }
 </style>
