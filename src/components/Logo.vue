@@ -16,26 +16,26 @@
       <rect
         width="25"
         height="25"
-        class="text-white fill-current hover:text-indigo-100"
+        class="text-white fill-current hover:text-primary-100"
       />
       <rect
         y="25"
         width="25"
         height="25"
-        class="text-indigo-200 fill-current hover:text-indigo-300"
+        class="text-primary-200 fill-current hover:text-primary-300"
       />
       <rect
         x="25"
         y="25"
         width="25"
         height="25"
-        class="text-indigo-400 fill-current hover:text-indigo-500"
+        class="text-primary-400 fill-current hover:text-primary-500"
       />
       <rect
         x="25"
         width="25"
         height="25"
-        class="text-indigo-600 fill-current hover:text-indigo-700"
+        class="text-primary-600 fill-current hover:text-primary-700"
       />
     </g>
   </svg>
