@@ -12,11 +12,14 @@
           <span class="block truncate">
             {{ product.title }}
           </span>
+          <span class="block truncate"> ${{ product.price }} </span>
+        </div>
+        <div>
+          <span class="block truncate"> cantidad: {{ quantity }} </span>
+        </div>
+        <div>
           <span class="block truncate">
-            {{ product.price }}
-          </span>
-          <span class="block truncate">
-            {{ product.quantity }}
+            Total: {{ quantity * product.price }}
           </span>
         </div>
       </div>
@@ -28,6 +31,13 @@
 export default {
   name: "ProductCard",
   props: ["quantity", "product"],
-  methods: {}
+  data() {
+    return {
+      tables: []
+    };
+  },
+  methods: {
+    total() {}
+  }
 };
 </script>
