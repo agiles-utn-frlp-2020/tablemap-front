@@ -1,5 +1,5 @@
 <template>
-  <div class="space-y-1">
+  <div class="space-y-1 z-10">
     <label class="block text-sm leading-5 font-medium text-gray-700">
       <slot></slot>
     </label>
