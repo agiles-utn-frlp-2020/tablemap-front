@@ -13,6 +13,7 @@
         >
           <div class="flex items-center space-x-3" v-if="modelValue">
             <img
+              v-if="modelValue.image"
               :src="modelValue.image"
               class="flex-shrink-0 h-6 w-6 rounded-full"
             />
