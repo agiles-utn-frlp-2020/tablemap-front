@@ -9,7 +9,7 @@
         <button
           type="button"
           @click="open"
-          class="cursor-pointer relative w-full rounded-md border border-gray-300 bg-white pl-3 pr-10 py-2 text-left focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition ease-in-out duration-150 sm:text-sm sm:leading-5"
+          class="cursor-pointer relative w-full rounded-md border border-gray-300 bg-white pl-3 pr-10 py-2 text-left focus:outline-none focus:shadow-outline-primary focus:border-primary-400 transition ease-in-out duration-150 sm:text-sm sm:leading-5"
         >
           <div class="flex items-center space-x-3" v-if="modelValue">
             <img
@@ -57,7 +57,7 @@
             :key="product.id"
             @click="select(product)"
             role="option"
-            class="text-gray-900 cursor-default select-none relative py-2 pl-3 pr-9 cursor-pointer hover:text-white hover:bg-indigo-600 focus:outline-none focus:text-white focus:bg-indigo-600"
+            class="text-gray-900 cursor-default select-none relative py-2 pl-3 pr-9 cursor-pointer hover:text-white hover:bg-primary-600 focus:outline-none focus:text-white focus:bg-primary-600"
           >
             <div class="flex items-center space-x-3">
               <img

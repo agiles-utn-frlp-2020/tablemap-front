@@ -59,7 +59,7 @@ export default {
 
     classes() {
       const base = "stroke-current cursor-pointer";
-      return this.isSelected ? `${base} text-indigo-800` : base;
+      return this.isSelected ? `${base} text-primary-600` : base;
     },
 
     strokeWidth() {
