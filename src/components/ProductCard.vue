@@ -1,40 +1,34 @@
 <template>
-  <div class="space-y-1">
-    <span class="inline-block w-full rounded-md shadow-sm">
-      <div
-        class="relative w-full rounded-md border border-gray-300 bg-white pl-3 pr-10 py-2 text-left focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition ease-in-out duration-150 sm:text-sm sm:leading-5"
-      >
-        <div class="flex items-center space-x-3">
-          <img
-            :src="product.image"
-            class="flex-shrink-0 h-6 w-6 rounded-full"
-          />
-          <span class="block truncate">
-            {{ product.title }}
-          </span>
-          <span class="block truncate"> ${{ product.price }} </span>
-        </div>
-        <div>
-          <span class="block truncate"> cantidad: {{ quantity }} </span>
-        </div>
-        <div>
-          <span class="block truncate">
-            Total: {{ quantity * product.price }}
-          </span>
-        </div>
-      </div>
-    </span>
+  <div class="w-100 bg-white p-4 flex items-center relative">
+    <img class="h-16 w-16 rounded-lg flex-grow-0" :src="product.image" />
+    <div class="flex-grow-0 ml-4">
+      <p class="text-2xl">{{ product.title }}</p>
+      <p class="text-gray-600">cantidad: {{ quantity }}</p>
+    </div>
+    <div class="flex-grow flex flex-col items-end">
+      <Price :price="totalPrice" class="text-3xl normal-nums"></Price>
+    </div>
   </div>
 </template>
 
 <script>
+import Price from "@/components/Price.vue";
+
 export default {
   name: "ProductCard",
   props: ["quantity", "product"],
+  components: {
+    Price
+  },
   data() {
     return {
       tables: []
     };
+  },
+  computed: {
+    totalPrice() {
+      return this.quantity * this.product.price;
+    }
   },
   methods: {
     total() {}
