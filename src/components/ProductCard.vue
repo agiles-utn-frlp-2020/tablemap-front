@@ -1,6 +1,8 @@
 <template>
   <div class="w-100 bg-white p-4 flex items-center relative">
-    <img class="h-16 w-16 rounded-lg flex-grow-0" :src="product.image" />
+    <div class="relative h-16 w-16 rounded-lg flex-grow-0 overflow-hidden">
+      <img class="absolute object-cover" :src="product.image" />
+    </div>
     <div class="flex-grow-0 ml-4">
       <p class="text-2xl">{{ product.title }}</p>
       <p class="text-gray-600">cantidad: {{ quantity }}</p>
@@ -29,9 +31,6 @@ export default {
     totalPrice() {
       return this.quantity * this.product.price;
     }
-  },
-  methods: {
-    total() {}
   }
 };
 </script>
