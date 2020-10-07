@@ -6,7 +6,7 @@ import SidebarOpenTableSelected from "./SidebarOpenTableSelected.vue";
 import SidebarNoTableSelected from "./SidebarNoTableSelected.vue";
 
 export default {
-  emits: ["open-table"],
+  name: "sidebar",
 
   props: ["table"],
 
@@ -15,7 +15,7 @@ export default {
       return h(SidebarNoTableSelected);
     }
     if (this.table.isOpen) {
-      return h(SidebarOpenTableSelected);
+      return h(SidebarOpenTableSelected, { table: this.table });
     }
     return h(SidebarClosedTableSelected);
   }

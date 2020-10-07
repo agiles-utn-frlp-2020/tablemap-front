@@ -1,5 +1,7 @@
 import { mount } from "@vue/test-utils";
 import Sidebar from "@/components/Sidebar/Sidebar.vue";
+import SidebarOpenTableSelected from "@/components/Sidebar/SidebarOpenTableSelected.vue";
+import SidebarClosedTableSelected from "@/components/Sidebar/SidebarClosedTableSelected.vue";
 
 jest.mock("@/services/products.js", () => {
   const PRODUCTS = [
@@ -7,15 +9,13 @@ jest.mock("@/services/products.js", () => {
       id: 1,
       title: "Cerveza IPA",
       price: 100,
-      image:
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Helles_im_Glas-Helles_%28pale_beer%29.jpg/150px-Helles_im_Glas-Helles_%28pale_beer%29.jpg"
+      image: ""
     },
     {
       id: 2,
       title: "Cerveza SCOTCH",
       price: 100,
-      image:
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Helles_im_Glas-Helles_%28pale_beer%29.jpg/150px-Helles_im_Glas-Helles_%28pale_beer%29.jpg"
+      image: ""
     }
   ];
 
@@ -43,10 +43,11 @@ describe("Sidebar", () => {
     };
 
     const wrapper = mount(Sidebar, { props });
+    const sidebar = wrapper.findComponent(SidebarClosedTableSelected);
     const button = wrapper.find("button");
 
     await button.trigger("click");
-    const event = wrapper.emitted()["open-table"];
+    const event = sidebar.emitted()["open-table"];
 
     expect(event).toBeTruthy();
   });
@@ -60,7 +61,8 @@ describe("Sidebar", () => {
     const button = wrapper.find("button[data-test-id=close]");
 
     await button.trigger("click");
-    const event = wrapper.emitted()["close-table"];
+    const sidebar = wrapper.findComponent(SidebarOpenTableSelected);
+    const event = sidebar.emitted()["close-table"];
 
     expect(event).toBeTruthy();
   });

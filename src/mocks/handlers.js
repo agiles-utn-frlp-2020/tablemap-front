@@ -1,8 +1,20 @@
 import { rest } from "msw";
 
 const TABLES = [
-  { position: { x: 10, y: 10 }, isSelected: false, isOpen: false, name: "1" },
-  { position: { x: 100, y: 150 }, isSelected: false, isOpen: true, name: "2" }
+  {
+    position: { x: 10, y: 10 },
+    isSelected: false,
+    isOpen: false,
+    name: "1",
+    order: []
+  },
+  {
+    position: { x: 100, y: 150 },
+    isSelected: false,
+    isOpen: true,
+    name: "2",
+    order: []
+  }
 ];
 
 const PRODUCTS = [
