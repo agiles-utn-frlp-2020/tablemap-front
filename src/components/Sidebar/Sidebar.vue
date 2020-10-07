@@ -6,7 +6,7 @@ import SidebarOpenTableSelected from "./SidebarOpenTableSelected.vue";
 import SidebarNoTableSelected from "./SidebarNoTableSelected.vue";
 
 export default {
-  emits: ["open-table"],
+  name: "sidebar",
 
   props: ["table"],
 
