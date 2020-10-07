@@ -74,7 +74,8 @@ export default {
     const quantity = ref(1);
 
     const total = computed(() => {
-      const order = table.value.order;
+      const order = table.value.order || [];
+
       return order.reduce((total, item) => {
         return total + item.quantity * item.product.price;
       }, 0);
