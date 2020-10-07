@@ -1,6 +1,26 @@
 module.exports = {
   theme: {
+    fontFamily: {
+      body: ["Montserrat", "sans-sans"],
+      sans: ["Montserrat", "sans-sans"]
+    },
     extend: {
+      boxShadow: {
+        outline: "0 0 0 3px rgba(127, 156, 245, 0.5)"
+      },
+      colors: {
+        primary: {
+          100: "#EBF4FF",
+          200: "#C3DAFE",
+          300: "#A3BFFA",
+          400: "#7F9CF5",
+          500: "#667EEA",
+          600: "#5A67D8",
+          700: "#4C51BF",
+          800: "#434190",
+          900: "#3C366B"
+        }
+      },
       inset: {
         full: "100%"
       },

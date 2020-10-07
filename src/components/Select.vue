@@ -1,18 +1,19 @@
 <template>
-  <div class="space-y-1">
+  <div class="z-10">
     <label class="block text-sm leading-5 font-medium text-gray-700">
       <slot></slot>
     </label>
 
     <div class="relative">
-      <span class="inline-block w-full rounded-md shadow-sm">
+      <span class="h-12 inline-block w-full rounded-md shadow-sm">
         <button
           type="button"
-          @click="open"
-          class="cursor-pointer relative w-full rounded-md border border-gray-300 bg-white pl-3 pr-10 py-2 text-left focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition ease-in-out duration-150 sm:text-sm sm:leading-5"
+          @click="toggle"
+          class="cursor-pointer relative w-full h-full rounded-md border border-gray-300 bg-white pl-3 pr-10 py-2 text-left focus:outline-none focus:shadow-outline-primary focus:border-primary-400 transition ease-in-out duration-150 sm:text-sm sm:leading-5"
         >
           <div class="flex items-center space-x-3" v-if="modelValue">
             <img
+              v-if="modelValue.image"
               :src="modelValue.image"
               class="flex-shrink-0 h-6 w-6 rounded-full"
             />
@@ -57,7 +58,7 @@
             :key="product.id"
             @click="select(product)"
             role="option"
-            class="text-gray-900 cursor-default select-none relative py-2 pl-3 pr-9 cursor-pointer hover:text-white hover:bg-indigo-600 focus:outline-none focus:text-white focus:bg-indigo-600"
+            class="text-gray-900 cursor-default select-none relative py-2 pl-3 pr-9 cursor-pointer hover:text-white hover:bg-primary-600 focus:outline-none focus:text-white focus:bg-primary-600"
           >
             <div class="flex items-center space-x-3">
               <img
@@ -113,8 +114,8 @@ export default {
       return this.modelValue.id === productId;
     },
 
-    open() {
-      this.isOpen = true;
+    toggle() {
+      this.isOpen = !this.isOpen;
     },
 
     select(product) {
