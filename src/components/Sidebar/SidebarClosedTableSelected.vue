@@ -1,6 +1,6 @@
 <template>
   <div class="flex h-full items-center justify-center">
-    <t-button @click="$emit('open-table')">Abrir mesa</t-button>
+    <Button @click="$emit('open-table')">Abrir mesa</Button>
   </div>
 </template>
 
@@ -9,7 +9,7 @@ import Button from "@/components/Button.vue";
 
 export default {
   components: {
-    "t-button": Button
+    Button
   }
 };
 </script>
