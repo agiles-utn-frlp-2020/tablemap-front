@@ -10,8 +10,8 @@
         v-model.number="quantity"
       />
 
-      <t-button class="flex-grow-0" variant="outline" @click="addProduct"
-        >Agregar producto</t-button
+      <Button class="flex-grow-0" variant="outline" @click="addProduct"
+        >Agregar producto</Button
       >
     </div>
 
@@ -28,7 +28,7 @@
     </div>
 
     <div class="flex justify-between">
-      <t-button data-test-id="close" @click="closeTable">Cerrar mesa</t-button>
+      <Button data-test-id="close" @click="closeTable">Cerrar mesa</Button>
       <Price v-if="total" :price="total" class="text-3xl"></Price>
     </div>
   </div>
@@ -60,7 +60,7 @@ export default {
   props: ["table"],
 
   components: {
-    "t-button": Button,
+    Button,
     Select,
     ProductCard,
     Price
