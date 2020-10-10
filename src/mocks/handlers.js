@@ -5,14 +5,30 @@ const TABLES = [
     position: { x: 10, y: 10 },
     isSelected: false,
     isOpen: false,
-    name: "1",
+    name: "Mesa 1",
     order: []
   },
   {
-    position: { x: 100, y: 150 },
+    position: { x: 10, y: 210 },
     isSelected: false,
     isOpen: true,
-    name: "2",
+    name: "Mesa 2",
+    order: []
+  },
+
+  {
+    position: { x: 10, y: 410 },
+    isSelected: false,
+    isOpen: true,
+    name: "Mesa 3",
+    order: []
+  },
+
+  {
+    position: { x: 210, y: 10 },
+    isSelected: false,
+    isOpen: false,
+    name: "Mesa 4",
     order: []
   }
 ];
@@ -21,7 +37,7 @@ const PRODUCTS = [
   {
     id: 1,
     title: "Cerveza IPA",
-    price: 100,
+    price: 120,
     image:
       "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Helles_im_Glas-Helles_%28pale_beer%29.jpg/150px-Helles_im_Glas-Helles_%28pale_beer%29.jpg"
   },
@@ -31,6 +47,14 @@ const PRODUCTS = [
     price: 100,
     image:
       "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Helles_im_Glas-Helles_%28pale_beer%29.jpg/150px-Helles_im_Glas-Helles_%28pale_beer%29.jpg"
+  },
+
+  {
+    id: 3,
+    title: "Papas",
+    price: 70,
+    image:
+      "https://s1.eestatic.com/2015/03/10/cocinillas/Cocinillas_17008413_127305533_1706x1280.jpg"
   }
 ];
 
