@@ -1,5 +1,7 @@
 import { mount } from "@vue/test-utils";
 import TableBoard from "@/components/TableBoard.vue";
+import ReadyIcon from "@/components/Icons/Ready.vue";
+import PeopleIcon from "@/components/Icons/People.vue";
 
 describe("TableBoard", () => {
   it("Should renders position", () => {
@@ -11,12 +13,12 @@ describe("TableBoard", () => {
     };
 
     const wrapper = mount(TableBoard, { props });
-    const rect = wrapper.find("rect");
+    const table = wrapper.find("svg");
 
-    expect(rect).toBeDefined();
-    expect(rect.attributes("x")).toBe("10");
-    expect(rect.attributes("y")).toBe("20");
-    expect(wrapper.text()).toBe("Table test");
+    expect(table).toBeDefined();
+    expect(table.attributes("x")).toBe("10");
+    expect(table.attributes("y")).toBe("20");
+    expect(wrapper.find("[data-testid=tableName]").text()).toBe("Table test");
   });
 
   it("Should renders table name", () => {
@@ -29,7 +31,21 @@ describe("TableBoard", () => {
 
     const wrapper = mount(TableBoard, { props });
 
-    expect(wrapper.text()).toBe("Table test");
+    expect(wrapper.find("[data-testid=tableName]").text()).toBe("Table test");
+  });
+
+  it("Should renders table close state", () => {
+    const props = {
+      position: { x: 10, y: 20 },
+      isSelected: false,
+      isOpen: false,
+      name: "Table test"
+    };
+
+    const wrapper = mount(TableBoard, { props });
+
+    expect(wrapper.find("[data-testid=tableState]").text()).toBe("Disponible");
+    expect(wrapper.findComponent(ReadyIcon).exists()).toBe(true);
   });
 
   it("Should renders table open state", () => {
@@ -42,6 +58,7 @@ describe("TableBoard", () => {
 
     const wrapper = mount(TableBoard, { props });
 
-    expect(wrapper.text()).toBe("Table testOpen");
+    expect(wrapper.find("[data-testid=tableState]").text()).toBe("Ocupada");
+    expect(wrapper.findComponent(PeopleIcon).exists()).toBe(true);
   });
 });
