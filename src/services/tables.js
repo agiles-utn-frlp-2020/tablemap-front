@@ -14,7 +14,7 @@ function parseTable(table) {
     },
     isSelected: false,
     isOpen: table.orders.length > 0,
-    order: table.orders[0],
+    order: [],
     isMerged: table.join_with[0]
   };
 }
@@ -26,7 +26,7 @@ function makeMergeTable(moved, fixed) {
     position: { ...fixed.position },
     isOpen: false,
     isSelected: false,
-    order: null
+    order: []
   };
 }
 
