@@ -131,7 +131,8 @@ export default {
       closeTable,
       selectedProduct,
       quantity,
-      total
+      total,
+      order
     };
   }
 };

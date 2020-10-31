@@ -86,7 +86,7 @@ export default {
   },
   props: {
     tables: { type: Array, required: true },
-    toMerge: { type: Object, required: true }
+    toMerge: { type: Object, required: false }
   },
   computed: {
     hasMerge() {
