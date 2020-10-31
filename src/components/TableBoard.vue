@@ -33,7 +33,7 @@
       :x="textPos.x"
       :y="textPos.y"
     >
-      {{ name }}
+      Mesa {{ name }}
     </text>
 
     <text

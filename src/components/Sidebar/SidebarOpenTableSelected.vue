@@ -19,7 +19,7 @@
       <div class="rounded-lg overflow-hidden">
         <ProductCard
           class="border-b-2"
-          v-for="item in table.order"
+          v-for="item in order"
           :key="item.id"
           v-bind="item"
         >
@@ -39,7 +39,11 @@ import Button from "@/components/Button.vue";
 import Select from "@/components/Select.vue";
 import ProductCard from "@/components/ProductCard.vue";
 import Price from "@/components/Price.vue";
-import { getProducts } from "@/services/products.js";
+import {
+  getProducts,
+  getOrder,
+  addProductToOrden
+} from "@/services/products.js";
 
 import { toRefs, ref, onMounted, computed } from "vue";
 
@@ -72,6 +76,13 @@ export default {
     const { table } = toRefs(props);
     const selectedProduct = ref({});
     const quantity = ref(1);
+    const order = ref([]);
+
+    if (table.value.order) {
+      getOrder(table.value.order).then(function(o) {
+        order.value = o;
+      });
+    }
 
     const total = computed(() => {
       const order = table.value.order || [];
@@ -82,12 +93,17 @@ export default {
     });
 
     function addProduct() {
-      if (!selectedProduct.value.title) {
+      if (!selectedProduct.value.name) {
         return;
       }
 
+      addProductToOrden(table.value.id, {
+        id: selectedProduct.value.id,
+        quantity: quantity.value
+      });
+
       const hasProduct = table.value.order.find(item => {
-        return item.product.title === selectedProduct.value.title;
+        return item.product.name === selectedProduct.value.name;
       });
 
       if (hasProduct) {

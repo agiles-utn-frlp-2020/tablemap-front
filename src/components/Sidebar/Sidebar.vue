@@ -17,7 +17,7 @@ export default {
     if (this.table.isOpen) {
       return h(SidebarOpenTableSelected, { table: this.table });
     }
-    return h(SidebarClosedTableSelected);
+    return h(SidebarClosedTableSelected, { table: this.table });
   }
 };
 </script>
