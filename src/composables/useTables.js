@@ -110,13 +110,13 @@ export function useTables() {
       position: { ...fixed.position },
       isOpen: false,
       isSelected: false,
-      order: null
+      order: []
     };
   };
 
   const merge = function() {
     const { moved, fixed } = toMerge.value;
-    tableServices.joinTable(fixed.id, moved.id);
+    //tableServices.joinTable(fixed.id, moved.id);
 
     tables.value = [...tables.value, makeMerge(toMerge.value)];
 
@@ -151,7 +151,7 @@ export function useTables() {
         const isMerged = table.mergedTables.includes(t.name);
 
         if (isMerged) {
-          tableServices.unjoinTable(t.id);
+          //tableServices.unjoinTable(t.id);
 
           return {
             ...t,
