@@ -6,9 +6,10 @@ const TABLE_HEIGHT = 120;
 const OFFSET = 20;
 
 export function makeMergeTable({ moved, fixed, xCollision, yCollision }) {
-  // TODO: hacer lo mismo con y cuando permitamos
-  // mergear desde ese punto
   let position;
+
+  xCollision = xCollision || moved.position.y === fixed.position.y;
+  yCollision = yCollision || moved.position.x === fixed.position.x;
 
   if (xCollision) {
     if (fixed.position.x < moved.position.x) {
@@ -31,8 +32,9 @@ export function makeMergeTable({ moved, fixed, xCollision, yCollision }) {
   }
 
   return {
+    id: `${fixed.name} / ${moved.name}`,
     name: `${fixed.name} / ${moved.name}`,
-    mergedTables: [moved.name, fixed.name],
+    mergedTables: [moved, fixed],
     collision: { x: xCollision, y: yCollision },
     position: { ...position },
     isOpen: fixed.isOpen,
@@ -40,6 +42,34 @@ export function makeMergeTable({ moved, fixed, xCollision, yCollision }) {
     order: fixed.order
   };
 }
+
+function aproxEqual(a, b, offset) {
+  const diff = Math.abs(a - b);
+  return diff < offset;
+}
+
+const checkYColision = (positionFixed, positionMoved, yDirection) => {
+  const nearX = aproxEqual(positionMoved.x, positionFixed.x, OFFSET);
+  const nearY = aproxEqual(
+    positionMoved.y + yDirection * TABLE_WIDTH,
+    positionFixed.y,
+    OFFSET
+  );
+
+  return nearX && nearY;
+};
+
+const checkXColision = (positionFixed, positionMoved, xDirection) => {
+  const nearX = aproxEqual(
+    positionMoved.x + xDirection * TABLE_WIDTH,
+    positionFixed.x,
+    OFFSET
+  );
+
+  const nearY = aproxEqual(positionMoved.y, positionFixed.y, OFFSET);
+
+  return nearX && nearY;
+};
 
 export function useTables() {
   const tables = ref([]);
@@ -49,10 +79,8 @@ export function useTables() {
     return tables.value.filter(t => !(t.isJoined || t.joinWith));
   });
 
-  // Esto lo podemos guardar en selectTable, pero como no
-  // es un cuello de botella lo podemos dejar aca
   const selectedTable = computed(() => {
-    return tables.value.find(table => table.isSelected);
+    return visibleTables.value.find(table => table.isSelected);
   });
 
   const fetchTables = async () => {
@@ -71,31 +99,34 @@ export function useTables() {
   };
 
   const toggleSelectedTable = force => {
-    tables.value = tables.value.map(table => {
-      if (!table.isSelected) {
-        return table;
-      }
+    const table = tables.value.find(t => t.isSelected);
+    tables.value = toggleOpenState(table, force);
+  };
 
-      let isOpen = force === undefined ? !table.isOpen : force;
+  const toggleOpenState = (table, force) => {
+    let isOpen = force === undefined ? !table.isOpen : force;
 
-      return {
+    return [
+      ...tables.value.filter(t => t.name !== table.name),
+      {
         ...table,
         isOpen
-      };
-    });
+      }
+    ];
   };
 
   const openSelectedTable = toggleSelectedTable.bind(null, true);
   const closeSelectedTable = toggleSelectedTable.bind(null, false);
   const findByName = name => tables.value.find(table => table.name === name);
 
-  const moveTable = function({ id, x, y }) {
-    if (!id || toMerge.value.fixed) {
+  const moveTable = function({ id: name, x, y }) {
+    if (!name || toMerge.value.fixed) {
       return;
     }
 
-    const table = findByName(id);
+    const table = findByName(name);
 
+    // El usuario hizo un drop
     if (!x || !y) {
       table.position.x = table.originalPosition.x;
       table.position.y = table.originalPosition.y;
@@ -124,39 +155,11 @@ export function useTables() {
     }
   };
 
-  function aproxEqual(a, b, offset) {
-    const diff = Math.abs(a - b);
-    return diff < offset;
-  }
-
-  const checkYColision = (positionFixed, positionMoved, yDirection) => {
-    const nearX = aproxEqual(positionMoved.x, positionFixed.x, OFFSET);
-    const nearY = aproxEqual(
-      positionMoved.y + yDirection * TABLE_WIDTH,
-      positionFixed.y,
-      OFFSET
-    );
-
-    return nearX && nearY;
-  };
-
-  const checkXColision = (positionFixed, positionMoved, xDirection) => {
-    const nearX = aproxEqual(
-      positionMoved.x + xDirection * TABLE_WIDTH,
-      positionFixed.x,
-      OFFSET
-    );
-
-    const nearY = aproxEqual(positionMoved.y, positionFixed.y, OFFSET);
-
-    return nearX && nearY;
-  };
-
   const checkCollision = function(table, xDirection, yDirection) {
     let xCollision;
     let yCollision;
 
-    const collisionTable = tables.value
+    const collisionTable = visibleTables.value
       .filter(t => t.name !== table.name)
       .find(t => {
         yCollision = checkYColision(table.position, t.position, yDirection);
@@ -206,7 +209,7 @@ export function useTables() {
     tables.value = tables.value
       .filter(t => t.name !== table.name)
       .map(t => {
-        const isJoined = table.mergedTables.includes(t.name);
+        const isJoined = table.mergedTables.find(mt => mt.name === t.name);
 
         if (isJoined) {
           tableServices.unjoinTable(t.id);
@@ -214,6 +217,7 @@ export function useTables() {
           return {
             ...t,
             position: { ...t.originalPosition },
+            isOpen: false, // Siempre una mesa que se separa queda cerrada
             isJoined: false,
             joinWith: null
           };
