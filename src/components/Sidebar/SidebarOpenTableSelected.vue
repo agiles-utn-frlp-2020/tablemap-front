@@ -40,6 +40,7 @@ import Select from "@/components/Select.vue";
 import ProductCard from "@/components/ProductCard.vue";
 import Price from "@/components/Price.vue";
 import { getProducts } from "@/services/products.js";
+// import { createOrder } from "@/services/orders.js";
 
 import { toRefs, ref, onMounted, computed } from "vue";
 
@@ -86,6 +87,14 @@ export default {
       if (!selectedProduct.value.name) {
         return;
       }
+
+      /*
+      createOrder({
+        quantity: 1,
+        product: selectedProduct.value.id,
+        table: table.value.id
+      });
+      */
 
       const hasProduct = table.value.order.find(item => {
         return item.product.name === selectedProduct.value.name;

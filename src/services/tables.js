@@ -1,4 +1,5 @@
 import { API_URL } from "./constants.js";
+import { makeMergeTable } from "../composables/useTables.js";
 
 function parseTable(table) {
   return {
@@ -15,18 +16,7 @@ function parseTable(table) {
     isSelected: false,
     isOpen: table.orders.length > 0,
     order: [],
-    isMerged: table.join_with[0]
-  };
-}
-
-function makeMergeTable(moved, fixed) {
-  return {
-    name: `${moved.name} / ${fixed.name}`,
-    mergedTables: [moved.name, fixed.name],
-    position: { ...fixed.position },
-    isOpen: false,
-    isSelected: false,
-    order: []
+    joinWith: table.join_with
   };
 }
 
@@ -37,10 +27,14 @@ export function getTables() {
       const fetchedTables = tables.map(parseTable);
 
       const mergedTables = fetchedTables
-        .filter(t => t.isMerged)
+        .filter(t => t.joinWith)
         .reduce((mergedTables, table) => {
-          const movedTable = fetchedTables.find(t => t.id === table.id);
-          const mergedTable = makeMergeTable(movedTable, table);
+          const movedTable = fetchedTables.find(t => t.id === table.joinWith);
+          const mergedTable = makeMergeTable({
+            moved: movedTable,
+            fixed: table
+          });
+          movedTable.isJoined = true;
 
           return [...mergedTables, mergedTable];
         }, []);
@@ -55,7 +49,7 @@ export function joinTable(fixed, moved) {
     headers: {
       "Content-Type": "application/json"
     },
-    body: JSON.stringify({ join_with: moved ? [moved] : null })
+    body: JSON.stringify({ join_with: moved ?? null })
   });
 }
 

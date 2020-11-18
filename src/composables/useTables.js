@@ -1,15 +1,52 @@
 import tableServices from "@/services/tables.js";
 import { ref, computed } from "vue";
 
-const TABLE_WIDTH = 100;
-const OFFSET = 40;
+const TABLE_WIDTH = 120;
+const TABLE_HEIGHT = 120;
+const OFFSET = 20;
+
+export function makeMergeTable({ moved, fixed, xCollision, yCollision }) {
+  // TODO: hacer lo mismo con y cuando permitamos
+  // mergear desde ese punto
+  let position;
+
+  if (xCollision) {
+    if (fixed.position.x < moved.position.x) {
+      position = fixed.position;
+    } else {
+      position = {
+        x: fixed.position.x - TABLE_WIDTH,
+        y: fixed.position.y
+      };
+    }
+  } else if (yCollision) {
+    if (fixed.position.y < moved.position.y) {
+      position = fixed.position;
+    } else {
+      position = {
+        x: fixed.position.x,
+        y: fixed.position.y - TABLE_HEIGHT
+      };
+    }
+  }
+
+  return {
+    name: `${fixed.name} / ${moved.name}`,
+    mergedTables: [moved.name, fixed.name],
+    collision: { x: xCollision, y: yCollision },
+    position: { ...position },
+    isOpen: fixed.isOpen,
+    isSelected: false,
+    order: fixed.order
+  };
+}
 
 export function useTables() {
   const tables = ref([]);
   const toMerge = ref({});
 
   const visibleTables = computed(() => {
-    return tables.value.filter(t => !t.isMerged);
+    return tables.value.filter(t => !(t.isJoined || t.joinWith));
   });
 
   // Esto lo podemos guardar en selectTable, pero como no
@@ -53,7 +90,7 @@ export function useTables() {
   const findByName = name => tables.value.find(table => table.name === name);
 
   const moveTable = function({ id, x, y }) {
-    if (!id) {
+    if (!id || toMerge.value.fixed) {
       return;
     }
 
@@ -68,12 +105,20 @@ export function useTables() {
     table.position.x = x;
     table.position.y = y;
 
-    const direction = table.originalPosition.x - x;
-    const mergeWith = checkCollision(table, direction / Math.abs(direction));
+    const xDirection = table.originalPosition.x - x;
+    const yDirection = table.originalPosition.y - y;
 
-    if (mergeWith) {
+    const collision = checkCollision(
+      table,
+      xDirection !== 0 ? xDirection / Math.abs(xDirection) : 1,
+      yDirection !== 0 ? yDirection / Math.abs(yDirection) : 1
+    );
+
+    if (collision) {
       toMerge.value = {
-        fixed: mergeWith,
+        xCollision: collision.xCollision,
+        yCollision: collision.yCollision,
+        fixed: collision.table,
         moved: table
       };
     }
@@ -84,41 +129,54 @@ export function useTables() {
     return diff < offset;
   }
 
-  const checkCollision = function(table, direction) {
-    return tables.value
-      .filter(t => !t.isOpen)
-      .find(t => {
-        if (t.name !== table.name) {
-          const nearX = aproxEqual(
-            t.position.x + direction * TABLE_WIDTH,
-            table.position.x,
-            OFFSET
-          );
-          const nearY = aproxEqual(t.position.y, table.position.y, OFFSET);
+  const checkYColision = (positionFixed, positionMoved, yDirection) => {
+    const nearX = aproxEqual(positionMoved.x, positionFixed.x, OFFSET);
+    const nearY = aproxEqual(
+      positionMoved.y + yDirection * TABLE_WIDTH,
+      positionFixed.y,
+      OFFSET
+    );
 
-          return nearX && nearY;
-        }
-
-        return false;
-      });
+    return nearX && nearY;
   };
 
-  const makeMerge = function({ moved, fixed }) {
+  const checkXColision = (positionFixed, positionMoved, xDirection) => {
+    const nearX = aproxEqual(
+      positionMoved.x + xDirection * TABLE_WIDTH,
+      positionFixed.x,
+      OFFSET
+    );
+
+    const nearY = aproxEqual(positionMoved.y, positionFixed.y, OFFSET);
+
+    return nearX && nearY;
+  };
+
+  const checkCollision = function(table, xDirection, yDirection) {
+    let xCollision;
+    let yCollision;
+
+    const collisionTable = tables.value
+      .filter(t => t.name !== table.name)
+      .find(t => {
+        yCollision = checkYColision(table.position, t.position, yDirection);
+        xCollision = checkXColision(table.position, t.position, xDirection);
+
+        return xCollision || yCollision;
+      });
+
     return {
-      name: `${moved.name} / ${fixed.name}`,
-      mergedTables: [moved.name, fixed.name],
-      position: { ...fixed.position },
-      isOpen: false,
-      isSelected: false,
-      order: []
+      xCollision,
+      yCollision,
+      table: collisionTable
     };
   };
 
   const merge = function() {
     const { moved, fixed } = toMerge.value;
-    //tableServices.joinTable(fixed.id, moved.id);
+    tableServices.joinTable(fixed.id, moved.id);
 
-    tables.value = [...tables.value, makeMerge(toMerge.value)];
+    tables.value = [...tables.value, makeMergeTable(toMerge.value)];
 
     tables.value = tables.value.map(table => {
       const isMovedTable = table.name === moved.name;
@@ -127,7 +185,7 @@ export function useTables() {
       if (isMovedTable || isFixedTable) {
         return {
           ...table,
-          isMerged: true
+          isJoined: true
         };
       }
 
@@ -148,15 +206,16 @@ export function useTables() {
     tables.value = tables.value
       .filter(t => t.name !== table.name)
       .map(t => {
-        const isMerged = table.mergedTables.includes(t.name);
+        const isJoined = table.mergedTables.includes(t.name);
 
-        if (isMerged) {
-          //tableServices.unjoinTable(t.id);
+        if (isJoined) {
+          tableServices.unjoinTable(t.id);
 
           return {
             ...t,
             position: { ...t.originalPosition },
-            isMerged: false
+            isJoined: false,
+            joinWith: null
           };
         }
 
