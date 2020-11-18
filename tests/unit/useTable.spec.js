@@ -81,21 +81,23 @@ describe("useTable", () => {
     expect(tables.value[0].isSelected).toBe(false);
   });
 
-  it("Should can open and close the selected table", async () => {
+  it.only("Should can open and close the selected table", async () => {
     const {
-      tables,
       fetchTables,
       selectTable,
       closeSelectedTable,
-      openSelectedTable
+      openSelectedTable,
+      findByName
     } = useTables();
 
+    const name = "Table test 1";
+
     await fetchTables();
-    selectTable({ name: "Table test 1" });
-    expect(tables.value[0].isOpen).toBe(false);
+    selectTable({ name });
+    expect(findByName(name).isOpen).toBe(false);
     openSelectedTable();
-    expect(tables.value[0].isOpen).toBe(true);
+    expect(findByName(name).isOpen).toBe(true);
     closeSelectedTable();
-    expect(tables.value[0].isOpen).toBe(false);
+    expect(findByName(name).isOpen).toBe(false);
   });
 });

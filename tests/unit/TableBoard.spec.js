@@ -13,7 +13,7 @@ describe("TableBoard", () => {
     };
 
     const wrapper = mount(TableBoard, { props });
-    const table = wrapper.find("svg");
+    const table = wrapper.find("rect");
 
     expect(table).toBeDefined();
     expect(table.attributes("x")).toBe("10");

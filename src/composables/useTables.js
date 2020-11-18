@@ -238,6 +238,7 @@ export function useTables() {
     closeSelectedTable,
     cancelMerge,
     merge,
-    unmerge
+    unmerge,
+    findByName
   };
 }
