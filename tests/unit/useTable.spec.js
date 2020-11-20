@@ -81,7 +81,7 @@ describe("useTable", () => {
     expect(tables.value[0].isSelected).toBe(false);
   });
 
-  it.only("Should can open and close the selected table", async () => {
+  it("Should can open and close the selected table", async () => {
     const {
       fetchTables,
       selectTable,
