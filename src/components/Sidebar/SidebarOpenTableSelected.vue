@@ -74,6 +74,7 @@ export default {
     watch(table, () => fetchOrder(table));
 
     function closeTable() {
+      table.value.orderId = null; // 😱
       closeOrder();
       ctx.emit("close-table");
     }

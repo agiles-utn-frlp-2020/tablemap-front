@@ -70,6 +70,9 @@ export default function useOrder(id) {
     setProducts,
     matchOrderProducts,
     addProduct,
-    closeOrder: () => closeOrder(orderId.value)
+    closeOrder: () => {
+      closeOrder(orderId.value);
+      orderId.value = null;
+    }
   };
 }
