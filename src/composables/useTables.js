@@ -39,6 +39,7 @@ export function makeMergeTable({ moved, fixed, xCollision, yCollision }) {
     position: { ...position },
     isOpen: fixed.isOpen,
     isSelected: false,
+    orderId: fixed.orderId,
     order: fixed.order
   };
 }

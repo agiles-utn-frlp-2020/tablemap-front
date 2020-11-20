@@ -3,7 +3,7 @@
     <div class="flex items-center">
       <Select class="flex-1 mr-2" v-model="selectedProduct" :options="products">
       </Select>
-      <!-- TODO: Hacer componente -->
+
       <input
         class="flex-grow-0 mr-2 h-12 p-4 w-24 rounded"
         type="number"
@@ -19,8 +19,8 @@
       <div class="rounded-lg overflow-hidden">
         <ProductCard
           class="border-b-2"
-          v-for="item in table.order"
-          :key="item.id"
+          v-for="item in order"
+          :key="item.product.id"
           v-bind="item"
         >
         </ProductCard>
@@ -39,23 +39,10 @@ import Button from "@/components/Button.vue";
 import Select from "@/components/Select.vue";
 import ProductCard from "@/components/ProductCard.vue";
 import Price from "@/components/Price.vue";
-import { getProducts } from "@/services/products.js";
-// import { createOrder } from "@/services/orders.js";
+import useProducts from "@/composables/useProducts.js";
+import useOrder from "@/composables/useOrder.js";
 
-import { toRefs, ref, onMounted, computed } from "vue";
-
-function useProducts() {
-  const products = ref([]);
-
-  async function fetchProducts() {
-    products.value = await getProducts();
-  }
-
-  return {
-    products,
-    fetchProducts
-  };
-}
+import { toRefs, ref, onMounted, watch } from "vue";
 
 export default {
   props: ["table"],
@@ -68,60 +55,49 @@ export default {
   },
 
   setup(props, ctx) {
-    const { products, fetchProducts } = useProducts();
-
     const { table } = toRefs(props);
     const selectedProduct = ref({});
     const quantity = ref(1);
-    const order = ref([]);
 
-    const total = computed(() => {
-      const order = table.value.order || [];
+    const { products, fetchProducts } = useProducts();
 
-      return order.reduce((total, item) => {
-        return total + item.quantity * item.product.price;
-      }, 0);
-    });
+    const {
+      order,
+      total,
+      fetchOrder,
+      setProducts,
+      matchOrderProducts,
+      addProduct,
+      closeOrder
+    } = useOrder(table.value.orderId);
 
-    function addProduct() {
-      if (!selectedProduct.value.name) {
-        return;
-      }
-
-      /*
-      createOrder({
-        quantity: 1,
-        product: selectedProduct.value.id,
-        table: table.value.id
-      });
-      */
-
-      const hasProduct = table.value.order.find(item => {
-        return item.product.name === selectedProduct.value.name;
-      });
-
-      if (hasProduct) {
-        hasProduct.quantity += quantity.value;
-      } else {
-        table.value.order.push({
-          product: selectedProduct.value,
-          quantity: quantity.value
-        });
-      }
-
-      quantity.value = 1;
-    }
+    watch(table, () => fetchOrder(table));
 
     function closeTable() {
-      table.value.order = [];
+      closeOrder();
       ctx.emit("close-table");
     }
 
-    onMounted(fetchProducts);
+    async function _addProduct() {
+      await addProduct(selectedProduct, quantity);
+      await getOrder();
+      quantity.value = 1;
+    }
+
+    async function getOrder() {
+      await fetchOrder(table);
+      matchOrderProducts();
+    }
+
+    onMounted(async () => {
+      const products = await fetchProducts();
+      setProducts(products);
+      getOrder();
+    });
 
     return {
       products,
-      addProduct,
+      addProduct: _addProduct,
       closeTable,
       selectedProduct,
       quantity,

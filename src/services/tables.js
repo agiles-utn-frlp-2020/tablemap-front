@@ -14,7 +14,8 @@ function parseTable(table) {
       y: table.y
     },
     isSelected: false,
-    isOpen: table.orders.length > 0,
+    isOpen: table.order != null,
+    orderId: table.order,
     order: [],
     joinWith: table.join_with
   };

@@ -50,7 +50,7 @@
       <div
         class="w-3/4 h-48 p-4 flex flex-col select-none bg-white shadow-lg rounded"
       >
-        <div class="flex-grow">
+        <div class="flex-grow text-xl">
           Queres unir las mesas?
         </div>
 
