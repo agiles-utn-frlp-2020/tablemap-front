@@ -1,12 +1,14 @@
 <template>
+  <nav-bar></nav-bar>
   <main class="flex h-full">
     <table-map
       class="w-3/5 h-full"
       :tables="tables"
       :to-merge="toMerge"
+      :can-move="canMove"
       @select-table="onSelectTable"
       @move-table="onMoveTable"
-      @reset-table-position="onMoveTable"
+      @stop-move-table="resetTablePosition"
       @cancel-merge="onCancelMerge"
       @accept-merge="onAcceptMerge"
     >
@@ -25,21 +27,21 @@
 </template>
 
 <script>
-import { onMounted } from "vue";
-
 import TableMap from "@/components/TableMap.vue";
 import Sidebar from "@/components/Sidebar/Sidebar.vue";
+import NavBar from "@/components/NavBar.vue";
 
 import { useTables } from "@/composables/useTables.js";
 
 export default {
-  components: { TableMap, Sidebar },
+  components: { TableMap, Sidebar, NavBar },
   setup() {
     const {
       tables,
       toMerge,
       selectedTable,
       moveTable,
+      resetTablePosition,
       openSelectedTable,
       closeSelectedTable,
       fetchTables,
@@ -49,7 +51,11 @@ export default {
       cancelMerge
     } = useTables();
 
-    onMounted(fetchTables);
+    fetchTables();
+
+    function canMove(table) {
+      return !(table.isOpen || table.mergedTables);
+    }
 
     return {
       tables,
@@ -62,7 +68,9 @@ export default {
       onMoveTable: moveTable,
       onAcceptMerge: merge,
       onCancelMerge: cancelMerge,
-      onUnmergeTable: unmerge
+      onUnmergeTable: unmerge,
+      resetTablePosition,
+      canMove
     };
   }
 };

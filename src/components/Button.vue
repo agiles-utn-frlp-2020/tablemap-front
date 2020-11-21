@@ -6,10 +6,13 @@
 
 <script>
 export default {
-  props: ["variant"],
+  props: {
+    variant: { default: "primary" },
+    size: {}
+  },
   computed: {
     classes() {
-      return this.variant === "outline" ? "button--outline" : "button--primary";
+      return `button--${this.variant} button--${this.size}`;
     }
   }
 };
@@ -20,13 +23,17 @@ export default {
   @apply px-4;
   @apply rounded;
   @apply transition;
-  @apply duration-300;
+  @apply duration-200;
 
   &:focus {
     @apply shadow-outline;
     @apply outline-none;
     @apply bg-blue-100;
   }
+}
+
+.button.button--sm {
+  @apply p-1;
 }
 
 .button--primary {
@@ -52,6 +59,19 @@ export default {
   &:focus {
     @apply bg-primary-600;
     @apply text-white;
+  }
+}
+
+.button--danger {
+  @appy text-red;
+  @apply py-3;
+  @apply border-2;
+  @apply border-red-600;
+
+  &:hover,
+  &:focus {
+    @apply text-white;
+    @apply bg-red-800;
   }
 }
 </style>

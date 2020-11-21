@@ -1,5 +1,5 @@
 <template>
-  <g class="cursor-pointer">
+  <g class="cursor-pointer relative">
     <rect
       :x="position.x"
       :y="position.y"
@@ -11,28 +11,32 @@
     <rect rx="3" v-for="chair in chairs" :key="chair.id" v-bind="chair" />
 
     <text
+      v-for="(t, i) in text"
+      :key="t"
       data-testid="tableName"
       text-anchor="start"
       class="select-none"
       :font-size="fontSize"
       :x="textPos.x"
-      :y="textPos.y"
+      :y="textPos.y + 14 * i"
     >
-      Mesa {{ name }}
+      {{ t }}
     </text>
 
-    <text
-      data-testid="tableState"
-      text-anchor="start"
-      class="select-none text-gray-700 fill-current"
-      :x="textPos.x"
-      :y="textPos.y + fontSize"
-      :font-size="fontSize - 4"
-      v-html="stateText"
-    >
-    </text>
+    <g v-if="showDetail">
+      <text
+        data-testid="tableState"
+        text-anchor="start"
+        class="select-none text-gray-700 fill-current"
+        :x="textPos.x"
+        :y="textPos.y + fontSize + (text.length - 1) * 14"
+        :font-size="fontSize - 4"
+        v-html="stateText"
+      >
+      </text>
 
-    <component :is="icon" :x="iconPos.x" :y="iconPos.y"></component>
+      <component :is="icon" :x="iconPos.x" :y="iconPos.y"></component>
+    </g>
   </g>
 </template>
 
@@ -46,7 +50,7 @@ const CHAIR_OFFSET = 20;
 // TODO: soportar distintos tipos de mesas
 const WIDTH = 120;
 const HEIGHT = 120;
-const FONT_SIZE = 14;
+const FONT_SIZE = 16;
 
 const UNSELECTED_STYLE = {
   "stroke-width": 1,
@@ -71,7 +75,8 @@ export default {
     position: { required: true, type: Object },
     isSelected: { required: true, type: Boolean },
     isOpen: { required: true, type: Boolean },
-    name: { required: true, type: String },
+    name: { required: true, type: [String, Number] },
+    showDetail: { required: false, type: Boolean, default: true },
     collision: {},
     mergedTables: {}
   },
@@ -81,6 +86,9 @@ export default {
     };
   },
   computed: {
+    text() {
+      return this.name.split("/");
+    },
     isMerged() {
       return this.mergedTables != null;
     },

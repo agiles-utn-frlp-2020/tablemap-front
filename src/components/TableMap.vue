@@ -1,6 +1,6 @@
 <template>
   <div @click.stop="selectTable({})" @mouseup="onDrop($event)" class="relative">
-    <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+    <svg viewBox="0 0 1000 800" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <pattern
           id="smallGrid"
@@ -31,10 +31,30 @@
         </pattern>
       </defs>
 
-      <rect width="100%" height="100%" fill="url(#grid)" />
+      <rect width="100%" height="100%" fill="url(#grid)" x="1" y="1" />
+
+      <g v-if="canAddTable">
+        <rect
+          fill="#FFF"
+          stroke="#5A67D8"
+          stroke-width="4"
+          width="196"
+          height="196"
+          x="800"
+          y="600"
+        ></rect>
+
+        <table-board
+          v-if="showNewTable"
+          :show-detail="showTableDetail"
+          v-bind="newTable"
+          @mousedown="createTable($event, table)"
+        ></table-board>
+      </g>
 
       <table-board
         :key="table.name"
+        :show-detail="showTableDetail"
         v-for="table in tables"
         v-bind="table"
         @click.stop="selectTable(table)"
@@ -69,6 +89,8 @@
 import TableBoard from "@/components/TableBoard.vue";
 import Button from "@/components/Button.vue";
 
+const GRID_SIZE = 10;
+
 export default {
   name: "TableMap",
   components: {
@@ -77,6 +99,16 @@ export default {
   },
   data() {
     return {
+      isMoved: false,
+      newTable: {
+        id: "nueva",
+        name: "Nueva mesa",
+        position: {
+          x: 838,
+          y: 638
+        }
+      },
+      showNewTable: true,
       movedTable: {
         id: null,
         dragOffsetX: null,
@@ -86,7 +118,11 @@ export default {
   },
   props: {
     tables: { type: Array, required: true },
-    toMerge: { type: Object, required: false }
+    toMerge: { type: Object, required: false },
+    canMove: { type: Function, required: true },
+    snap: { type: Boolean, required: false, default: false },
+    showTableDetail: { type: Boolean, required: false, default: true },
+    canAddTable: { type: Boolean, required: false, default: false }
   },
   computed: {
     hasMerge() {
@@ -95,11 +131,14 @@ export default {
   },
   methods: {
     selectTable(table) {
+      if (this.isMoved) {
+        this.isMoved = false;
+        return;
+      }
       this.$emit("select-table", table);
     },
 
     cancelMerge() {
-      console.log("cancel-merge");
       this.$emit("cancel-merge");
     },
 
@@ -107,35 +146,73 @@ export default {
       this.$emit("accept-merge");
     },
 
+    calcNextPosition({ offsetX, offsetY }, snap) {
+      const x = offsetX - this.movedTable.dragOffsetX;
+      const y = offsetY - this.movedTable.dragOffsetY;
+
+      if (snap) {
+        return {
+          x: GRID_SIZE * Math.round(x / GRID_SIZE),
+          y: GRID_SIZE * Math.round(y / GRID_SIZE)
+        };
+      }
+
+      return {
+        x,
+        y
+      };
+    },
+
     onDrag(e, table) {
-      if (table.isOpen || table.mergedTables) {
+      if (!this.canMove(table)) {
         return;
       }
 
-      this.movedTable.id = table.name;
+      this.movedTable.id = table.id;
       this.movedTable.dragOffsetX = e.offsetX - table.position.x;
       this.movedTable.dragOffsetY = e.offsetY - table.position.y;
       this.$el.addEventListener("mousemove", this.move);
+
+      return false;
     },
 
     move(e) {
+      this.isMoved = true;
       this.$emit("move-table", {
         id: this.movedTable.id,
-        x: e.offsetX - this.movedTable.dragOffsetX,
-        y: e.offsetY - this.movedTable.dragOffsetY
+        ...this.calcNextPosition(e)
       });
     },
 
-    onDrop() {
-      this.$emit("reset-table-position", {
-        id: this.movedTable.id
+    createTable(e) {
+      this.showNewTable = false;
+
+      const newTable = {
+        id: this.newTable.id,
+        ...this.newTable.position
+      };
+
+      this.$emit("create-table", newTable);
+      this.onDrag(e, this.newTable);
+    },
+
+    onDrop(e) {
+      this.$emit("stop-move-table", {
+        id: this.movedTable.id,
+        ...this.calcNextPosition(e, this.snap)
       });
 
       this.$el.removeEventListener("mousemove", this.move);
 
+      if (this.movedTable.id === "nueva") {
+        this.showNewTable = true;
+      }
+
       this.movedTable.id = null;
       this.movedTable.x = null;
       this.movedTable.y = null;
+
+      return false;
     }
   }
 };
