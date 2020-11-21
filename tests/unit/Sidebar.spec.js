@@ -26,6 +26,17 @@ jest.mock("@/services/products.js", () => {
   };
 });
 
+jest.mock("@/services/orders.js", () => {
+  return {
+    createOrder() {
+      return Promise.resolve(1);
+    },
+    closeOrder() {
+      return Promise.resolve();
+    }
+  };
+});
+
 describe("Sidebar", () => {
   it("Should renders the correct button if selected table is closed", () => {
     const props = {
@@ -47,6 +58,7 @@ describe("Sidebar", () => {
     const button = wrapper.find("button");
 
     await button.trigger("click");
+
     const event = sidebar.emitted()["open-table"];
 
     expect(event).toBeTruthy();

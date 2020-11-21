@@ -3,33 +3,29 @@ import { rest } from "msw";
 const TABLES = [
   {
     position: { x: 10, y: 10 },
-    isSelected: false,
     isOpen: false,
     name: "Mesa 1",
-    order: []
+    orders: []
   },
   {
     position: { x: 10, y: 210 },
-    isSelected: false,
     isOpen: true,
     name: "Mesa 2",
-    order: []
+    orders: []
   },
 
   {
     position: { x: 10, y: 410 },
-    isSelected: false,
     isOpen: true,
     name: "Mesa 3",
-    order: []
+    orders: []
   },
 
   {
     position: { x: 210, y: 10 },
-    isSelected: false,
     isOpen: false,
     name: "Mesa 4",
-    order: []
+    orders: []
   }
 ];
 

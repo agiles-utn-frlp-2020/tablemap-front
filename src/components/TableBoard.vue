@@ -1,29 +1,14 @@
 <template>
   <g class="cursor-pointer">
-    <svg
-      viewBox="0 0 150 150"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
+    <rect
       :x="position.x"
       :y="position.y"
+      rx="5"
       :width="width"
       :height="height"
-    >
-      <rect
-        rx="3"
-        v-bind="style"
-        x="6.556"
-        y="6.556"
-        width="136.889"
-        height="136.889"
-      />
-
-      <path
-        d="M48.294 1h53.412c.945 0 1.363 1.19.625 1.78l-4.26 3.408a1 1 0 01-.624.22H52.553a1 1 0 01-.624-.22l-4.26-3.407C46.931 2.19 47.35 1 48.294 1zM101.706 149H48.294c-.945 0-1.363-1.19-.624-1.781l4.259-3.407a.999.999 0 01.624-.219h44.894c.227 0 .447.077.624.219l4.26 3.407c.738.591.32 1.781-.625 1.781zM1 101.706V48.294c0-.945 1.19-1.363 1.78-.624l3.408 4.259a1 1 0 01.22.624v44.894a1 1 0 01-.22.624l-3.407 4.26c-.59.738-1.781.32-1.781-.625zM149 48.294v53.412c0 .945-1.19 1.363-1.781.625l-3.407-4.26a.999.999 0 01-.219-.624V52.553c0-.227.077-.447.219-.624l3.407-4.26c.591-.738 1.781-.32 1.781.625z"
-        fill="#fff"
-        v-bind="style"
-      />
-    </svg>
+      v-bind="style"
+    />
+    <rect rx="3" v-for="chair in chairs" :key="chair.id" v-bind="chair" />
 
     <text
       data-testid="tableName"
@@ -33,7 +18,7 @@
       :x="textPos.x"
       :y="textPos.y"
     >
-      {{ name }}
+      Mesa {{ name }}
     </text>
 
     <text
@@ -54,6 +39,9 @@
 <script>
 import ReadyIcon from "@/components/Icons/Ready.vue";
 import PeopleIcon from "@/components/Icons/People.vue";
+
+const CHAIR_HEIGHT = 6;
+const CHAIR_OFFSET = 20;
 
 // TODO: soportar distintos tipos de mesas
 const WIDTH = 120;
@@ -83,16 +71,145 @@ export default {
     position: { required: true, type: Object },
     isSelected: { required: true, type: Boolean },
     isOpen: { required: true, type: Boolean },
-    name: { required: true, type: String }
+    name: { required: true, type: String },
+    collision: {},
+    mergedTables: {}
   },
   data() {
     return {
-      width: WIDTH,
-      height: HEIGHT,
       fontSize: FONT_SIZE
     };
   },
   computed: {
+    isMerged() {
+      return this.mergedTables != null;
+    },
+    width() {
+      return this.isMerged && this.collision.x ? WIDTH * 2 : WIDTH;
+    },
+    height() {
+      return this.isMerged && this.collision.y ? HEIGHT * 2 : HEIGHT;
+    },
+    chairs() {
+      const leftChair = {
+        id: "LEFT",
+        x: this.position.x - CHAIR_HEIGHT,
+        y: this.position.y + CHAIR_OFFSET,
+        width: CHAIR_HEIGHT,
+        height: this.height - CHAIR_OFFSET * 2,
+        ...this.style
+      };
+
+      const rightChair = {
+        id: "RIGHT",
+        x: this.position.x + this.width,
+        y: this.position.y + CHAIR_OFFSET,
+        width: CHAIR_HEIGHT,
+        height: this.height - CHAIR_OFFSET * 2,
+        ...this.style
+      };
+
+      const topChair = {
+        id: "TOP",
+        x: this.position.x + CHAIR_OFFSET,
+        y: this.position.y - CHAIR_HEIGHT,
+        width: this.width - CHAIR_OFFSET * 2,
+        height: CHAIR_HEIGHT,
+        ...this.style
+      };
+
+      const bottomChair = {
+        id: "BOTTOM",
+        x: this.position.x + CHAIR_OFFSET,
+        y: this.position.y + this.height,
+        width: this.width - CHAIR_OFFSET * 2,
+        height: CHAIR_HEIGHT,
+        ...this.style
+      };
+
+      if (!this.isMerged) {
+        return [leftChair, topChair, rightChair, bottomChair];
+      }
+
+      if (this.isMerged && this.collision.x) {
+        return [
+          leftChair,
+          rightChair,
+          {
+            id: "TOP-LEFT",
+            x: this.position.x + CHAIR_OFFSET,
+            y: this.position.y - CHAIR_HEIGHT,
+            width: this.width / 2 - CHAIR_OFFSET * 2,
+            height: CHAIR_HEIGHT,
+            ...this.style
+          },
+
+          {
+            id: "TOP-RIGHT",
+            x: this.position.x + this.width / 2 + CHAIR_OFFSET,
+            y: this.position.y - CHAIR_HEIGHT,
+            width: this.width / 2 - CHAIR_OFFSET * 2,
+            height: CHAIR_HEIGHT,
+            ...this.style
+          },
+
+          {
+            id: "BOTTOM-LEFT",
+            x: this.position.x + CHAIR_OFFSET,
+            y: this.position.y + this.height,
+            width: this.width / 2 - CHAIR_OFFSET * 2,
+            height: CHAIR_HEIGHT,
+            ...this.style
+          },
+
+          {
+            id: "BOTTOM-RIGHT",
+            x: this.position.x + this.width / 2 + CHAIR_OFFSET,
+            y: this.position.y + this.height,
+            width: this.width / 2 - CHAIR_OFFSET * 2,
+            height: CHAIR_HEIGHT,
+            ...this.style
+          }
+        ];
+      }
+
+      return [
+        topChair,
+        bottomChair,
+        {
+          id: "LEFT-TOP",
+          x: this.position.x - CHAIR_HEIGHT,
+          y: this.position.y + CHAIR_OFFSET,
+          width: CHAIR_HEIGHT,
+          height: this.height / 2 - CHAIR_OFFSET * 2,
+          ...this.style
+        },
+        {
+          id: "LEFT-BOTTOM",
+          x: this.position.x - CHAIR_HEIGHT,
+          y: this.position.y + this.height / 2 + CHAIR_OFFSET,
+          width: CHAIR_HEIGHT,
+          height: this.height / 2 - CHAIR_OFFSET * 2,
+          ...this.style
+        },
+        {
+          id: "RIGHT-TOP",
+          x: this.position.x + this.width,
+          y: this.position.y + CHAIR_OFFSET,
+          width: CHAIR_HEIGHT,
+          height: this.height / 2 - CHAIR_OFFSET * 2,
+          ...this.style
+        },
+        {
+          id: "LEFT-BOTTOM",
+          x: this.position.x + this.width,
+          y: this.position.y + this.height / 2 + CHAIR_OFFSET,
+          width: CHAIR_HEIGHT,
+          height: this.height / 2 - CHAIR_OFFSET * 2,
+          ...this.style
+        }
+      ];
+    },
     textPos() {
       return {
         x: this.position.x + 10,

@@ -4,7 +4,7 @@
       <img class="absolute object-cover" :src="product.image" />
     </div>
     <div class="flex-grow-0 ml-4">
-      <p class="text-2xl">{{ product.title }}</p>
+      <p class="text-2xl">{{ product.name }}</p>
       <p class="text-gray-600">cantidad: {{ quantity }}</p>
     </div>
     <div class="flex-grow flex flex-col items-end">
