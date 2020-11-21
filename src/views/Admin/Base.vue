@@ -39,7 +39,7 @@
         Salir
       </div>
     </nav>
-    <main class="my-4 mx-8 flex-1 flex">
+    <main class="my-4 mx-8 flex-1 flex overflow-hidden">
       <router-view />
     </main>
   </div>
