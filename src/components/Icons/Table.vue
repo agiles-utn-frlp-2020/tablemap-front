@@ -1,0 +1,57 @@
+<template>
+  <svg
+    width="50"
+    height="50"
+    viewBox="0 0 116 115"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <rect
+      x="9.5"
+      y="8.5"
+      width="97"
+      height="97"
+      rx="3.5"
+      stroke="#5A67D8"
+      stroke-width="3"
+    />
+    <rect
+      x="26.5"
+      y="1.5"
+      width="63"
+      height="7"
+      rx="1.5"
+      stroke="#5A67D8"
+      stroke-width="3"
+    />
+    <rect
+      x="113.7"
+      y="25.5"
+      width="63"
+      height="7"
+      rx="1.5"
+      transform="rotate(90 113.7 25.5)"
+      stroke="#5A67D8"
+      stroke-width="3"
+    />
+    <rect
+      x="9.3"
+      y="23.5"
+      width="63"
+      height="7"
+      rx="1.5"
+      transform="rotate(90 9.3 23.5)"
+      stroke="#5A67D8"
+      stroke-width="3"
+    />
+    <rect
+      x="26.5"
+      y="105.7"
+      width="63"
+      height="7"
+      rx="1.5"
+      stroke="#5A67D8"
+      stroke-width="3"
+    />
+  </svg>
+</template>

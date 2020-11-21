@@ -5,6 +5,10 @@ module.exports = {
       sans: ["Montserrat", "sans-sans"]
     },
     extend: {
+      spacing: {
+        "2/3": "66.666%",
+        "1/2": "50%"
+      },
       boxShadow: {
         outline: "0 0 0 3px rgba(127, 156, 245, 0.5)"
       },
@@ -27,6 +31,9 @@ module.exports = {
       opacity: {
         "10": "0.1",
         "90": "0.9"
+      },
+      h: {
+        80: "20rem"
       }
     }
   },

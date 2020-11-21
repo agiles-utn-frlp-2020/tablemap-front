@@ -1,17 +1,6 @@
 <template>
-  <nav-bar></nav-bar>
   <router-view />
 </template>
-
-<script>
-import NavBar from "@/components/NavBar.vue";
-
-export default {
-  components: {
-    NavBar
-  }
-};
-</script>
 
 <style lang="postcss">
 @import "assets/styles/tailwind.postcss";
@@ -31,9 +20,18 @@ export default {
     @apply text-xl;
   }
 
+  .form-group {
+    @apply .flex;
+    @apply .flex-col;
+  }
+
   input,
   .input {
     @apply border;
+    @apply p-4;
+    @apply h-12;
+    @apply rounded-md;
+    @apply shadow-sm;
 
     &:focus {
       @apply border-primary-400;
