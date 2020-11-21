@@ -18,7 +18,7 @@
               class="flex-shrink-0 h-6 w-6 rounded-full"
             />
             <span class="block truncate">
-              {{ modelValue.title }}
+              {{ modelValue.name }}
             </span>
           </div>
 
@@ -71,7 +71,7 @@
                   isSelected(product.id) ? 'font-semibold' : 'font-normal'
                 "
               >
-                {{ product.title }}
+                {{ product.name }}
               </span>
             </div>
 
