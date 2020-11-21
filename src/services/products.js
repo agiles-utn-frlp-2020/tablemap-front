@@ -42,8 +42,15 @@ export function getOrder(orderId) {
   return fetch(`${API_URL}/orders/${orderId}`).then(resp => resp.json());
 }
 
+export function deleteProduct(product) {
+  return fetch(`${API_URL}/products/${product.id}`, {
+    method: "DELETE"
+  });
+}
+
 export default {
   getProducts,
   createProduct,
+  deleteProduct,
   updateProduct
 };

@@ -5,11 +5,33 @@ const TABLE_WIDTH = 120;
 const TABLE_HEIGHT = 120;
 const OFFSET = 20;
 
+export function parseTable(table) {
+  return {
+    id: table.id,
+    name: table.name ? `${table.name}` : `Mesa ${table.id}`,
+    position: {
+      x: table.x,
+      y: table.y
+    },
+    originalPosition: {
+      x: table.x,
+      y: table.y
+    },
+    isSelected: false,
+    isOpen: table.order != null,
+    orderId: table.order,
+    order: [],
+    joinWith: table.join_with,
+    joinDirection: table.join_direction
+  };
+}
+
 export function makeMergeTable({ moved, fixed, xCollision, yCollision }) {
   let position;
 
-  xCollision = xCollision || moved.position.y === fixed.position.y;
-  yCollision = yCollision || moved.position.x === fixed.position.x;
+  // Estamos suponiendo que comparten 1 coordenada
+  xCollision = xCollision || fixed.joinDirection === "X";
+  yCollision = yCollision || fixed.joinDirection === "Y";
 
   if (xCollision) {
     if (fixed.position.x < moved.position.x) {
@@ -72,11 +94,20 @@ const checkXColision = (positionFixed, positionMoved, xDirection) => {
   return nearX && nearY;
 };
 
-export function useTables() {
+export function useTables(
+  { shouldCheckCollision, shouldFilterMerged } = {
+    shouldCheckCollision: true,
+    shouldFilterMerged: true
+  }
+) {
   const tables = ref([]);
   const toMerge = ref({});
 
   const visibleTables = computed(() => {
+    if (!shouldFilterMerged) {
+      return tables.value.filter(t => !t.mergedTables);
+    }
+
     return tables.value.filter(t => !(t.isJoined || t.joinWith));
   });
 
@@ -88,9 +119,9 @@ export function useTables() {
     tables.value = await tableServices.getTables();
   };
 
-  const selectTable = ({ name } = {}) => {
+  const selectTable = ({ id } = {}) => {
     tables.value = tables.value.map(table => {
-      const isSelected = table.name === name ? !table.isSelected : false;
+      const isSelected = table.id === id ? !table.isSelected : false;
 
       return {
         ...table,
@@ -108,7 +139,7 @@ export function useTables() {
     let isOpen = force === undefined ? !table.isOpen : force;
 
     return [
-      ...tables.value.filter(t => t.name !== table.name),
+      ...tables.value.filter(t => t.id !== table.id),
       {
         ...table,
         isOpen
@@ -118,24 +149,31 @@ export function useTables() {
 
   const openSelectedTable = toggleSelectedTable.bind(null, true);
   const closeSelectedTable = toggleSelectedTable.bind(null, false);
-  const findByName = name => tables.value.find(table => table.name === name);
+  const findById = id => tables.value.find(table => table.id === id);
 
-  const moveTable = function({ id: name, x, y }) {
-    if (!name || toMerge.value.fixed) {
+  const resetTablePosition = function({ id }) {
+    const table = findById(id);
+    if (!table) {
       return;
     }
 
-    const table = findByName(name);
+    table.position.x = table.originalPosition.x;
+    table.position.y = table.originalPosition.y;
+  };
 
-    // El usuario hizo un drop
-    if (!x || !y) {
-      table.position.x = table.originalPosition.x;
-      table.position.y = table.originalPosition.y;
+  const moveTable = function({ id, x, y }) {
+    if (!id || toMerge.value.fixed) {
       return;
     }
+
+    const table = findById(id);
 
     table.position.x = x;
     table.position.y = y;
+
+    if (!shouldCheckCollision) {
+      return;
+    }
 
     const xDirection = table.originalPosition.x - x;
     const yDirection = table.originalPosition.y - y;
@@ -161,7 +199,7 @@ export function useTables() {
     let yCollision;
 
     const collisionTable = visibleTables.value
-      .filter(t => t.name !== table.name)
+      .filter(t => t.id !== table.id && !t.mergedTables)
       .find(t => {
         yCollision = checkYColision(table.position, t.position, yDirection);
         xCollision = checkXColision(table.position, t.position, xDirection);
@@ -177,14 +215,16 @@ export function useTables() {
   };
 
   const merge = function() {
-    const { moved, fixed } = toMerge.value;
-    tableServices.joinTable(fixed.id, moved.id);
+    const { moved, fixed, xCollision } = toMerge.value;
+    const collision = xCollision ? "X" : "Y";
+
+    tableServices.joinTable(fixed.id, moved.id, collision);
 
     tables.value = [...tables.value, makeMergeTable(toMerge.value)];
 
     tables.value = tables.value.map(table => {
-      const isMovedTable = table.name === moved.name;
-      const isFixedTable = table.name === fixed.name;
+      const isMovedTable = table.id === moved.id;
+      const isFixedTable = table.id === fixed.id;
 
       if (isMovedTable || isFixedTable) {
         return {
@@ -208,9 +248,9 @@ export function useTables() {
 
   const unmerge = function(table) {
     tables.value = tables.value
-      .filter(t => t.name !== table.name)
+      .filter(t => t.id !== table.id)
       .map(t => {
-        const isJoined = table.mergedTables.find(mt => mt.name === t.name);
+        const isJoined = table.mergedTables.find(mt => mt.id === t.id);
 
         if (isJoined) {
           tableServices.unjoinTable(t.id);
@@ -228,18 +268,56 @@ export function useTables() {
       });
   };
 
+  const updateTable = function(id, table) {
+    if (!id) {
+      return;
+    }
+
+    let newTable;
+
+    tables.value = tables.value.map(t => {
+      if (t.id === id) {
+        newTable = {
+          ...t,
+          ...table
+        };
+        return newTable;
+      }
+      return t;
+    });
+
+    if (id === "nueva") {
+      tableServices.createTable(newTable);
+    } else {
+      tableServices.updateTable(table);
+    }
+  };
+
+  const createTable = function(newTable) {
+    tables.value = [...tables.value, parseTable(newTable)];
+  };
+
+  const deleteTable = function(table) {
+    tables.value = tables.value.filter(t => t.id !== table.id);
+    return tableServices.deleteTable(table.id);
+  };
+
   return {
     tables: visibleTables,
     toMerge,
     selectedTable,
     moveTable,
+    resetTablePosition,
+    createTable,
     fetchTables,
+    updateTable,
     selectTable,
     openSelectedTable,
     closeSelectedTable,
     cancelMerge,
     merge,
     unmerge,
-    findByName
+    findById,
+    deleteTable
   };
 }
