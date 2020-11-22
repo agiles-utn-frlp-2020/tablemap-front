@@ -13,4 +13,18 @@ describe("Product", function() {
     cy.get("#price").type("500");
     cy.get(".flex > .button--primary").click();
   });
+  it("Pruebo eliminar un producto", function() {
+    cy.visit("http://localhost:8080/login");
+    cy.get("#user").type("admin");
+    cy.get("#pass").type("admin");
+    cy.get(".button").click();
+    cy.get('[href="/admin/product"] > .menu-item').click();
+    cy.wait(200);
+    cy.get(".mx-4 > .text-2xl")
+      .contains("Piza")
+      .click();
+    cy.get(".button--danger").click();
+    cy.get('[href="/admin/table"] > .menu-item').click();
+    cy.get('[href="/admin/product"] > .menu-item').click();
+  });
 });
