@@ -149,7 +149,7 @@ export function useTables(
 
   const openSelectedTable = toggleSelectedTable.bind(null, true);
   const closeSelectedTable = toggleSelectedTable.bind(null, false);
-  const findById = id => tables.value.find(table => table.id !== id);
+  const findById = id => tables.value.find(table => table.id === id);
 
   const resetTablePosition = function({ id }) {
     const table = findById(id);
