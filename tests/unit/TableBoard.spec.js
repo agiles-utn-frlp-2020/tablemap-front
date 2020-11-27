@@ -18,9 +18,7 @@ describe("TableBoard", () => {
     expect(table).toBeDefined();
     expect(table.attributes("x")).toBe("10");
     expect(table.attributes("y")).toBe("20");
-    expect(wrapper.find("[data-testid=tableName]").text()).toBe(
-      "Mesa Table test"
-    );
+    expect(wrapper.find("[data-testid=tableName]").text()).toBe("Table test");
   });
 
   it("Should renders table name", () => {
@@ -33,9 +31,7 @@ describe("TableBoard", () => {
 
     const wrapper = mount(TableBoard, { props });
 
-    expect(wrapper.find("[data-testid=tableName]").text()).toBe(
-      "Mesa Table test"
-    );
+    expect(wrapper.find("[data-testid=tableName]").text()).toBe("Table test");
   });
 
   it("Should renders table close state", () => {

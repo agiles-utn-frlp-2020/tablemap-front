@@ -1,15 +1,17 @@
-import { mount } from "@vue/test-utils";
+import { shallowMount } from "@vue/test-utils";
 import Home from "@/views/Home.vue";
 
 jest.mock("@/services/tables.js", () => {
   const TABLES = [
     {
+      id: 1,
       position: { x: 10, y: 20 },
       isOpen: false,
       name: "Table test 1"
     },
 
     {
+      id: 2,
       position: { x: 300, y: 200 },
       isOpen: false,
       name: "Table test 2"
@@ -25,15 +27,15 @@ jest.mock("@/services/tables.js", () => {
 
 describe("Home", () => {
   it("should has only one select table at a time", async () => {
-    const home = mount(Home, {});
+    const home = shallowMount(Home, {});
     await home.vm.$nextTick();
 
-    home.vm.onSelectTable({ name: "Table test 1" });
+    home.vm.onSelectTable({ id: 1 });
 
     expect(home.vm.tables[0].isSelected).toBe(true);
     expect(home.vm.tables[1].isSelected).toBe(false);
 
-    home.vm.onSelectTable({ name: "Table test 2" });
+    home.vm.onSelectTable({ id: 2 });
 
     expect(home.vm.tables[0].isSelected).toBe(false);
     expect(home.vm.tables[1].isSelected).toBe(true);

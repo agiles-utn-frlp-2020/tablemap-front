@@ -5,6 +5,7 @@ import TableBoard from "@/components/TableBoard.vue";
 describe("TableMap", () => {
   it("Should renders two tables", () => {
     const props = {
+      canMove: () => true,
       tables: [
         {
           position: { x: 10, y: 20 },
@@ -29,6 +30,7 @@ describe("TableMap", () => {
 
   it("Should trigger 'select-table' when click a table", async () => {
     const props = {
+      canMove: () => true,
       tables: [
         {
           position: { x: 10, y: 20 },
@@ -58,6 +60,7 @@ describe("TableMap", () => {
 
   it("Should trigger 'select-table' when click the map", async () => {
     const props = {
+      canMove: () => true,
       tables: []
     };
 
