@@ -22,20 +22,20 @@
         y="25"
         width="25"
         height="25"
-        class="text-primary-200 fill-current hover:text-primary-300"
+        class="text-white fill-current hover:text-primary-300"
       />
       <rect
         x="25"
         y="25"
         width="25"
         height="25"
-        class="text-primary-400 fill-current hover:text-primary-500"
+        class="text-red-400 fill-current hover:text-primary-500"
       />
       <rect
         x="25"
         width="25"
         height="25"
-        class="text-primary-600 fill-current hover:text-primary-700"
+        class="text-red-400 fill-current hover:text-primary-700"
       />
     </g>
   </svg>
