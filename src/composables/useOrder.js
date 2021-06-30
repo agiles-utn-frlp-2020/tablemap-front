@@ -1,10 +1,10 @@
-import { ref, computed } from "vue";
+import { ref } from "vue";
 
 import {
   getOrder,
   createOrder,
   closeOrder,
-  addProductToOrder
+  addProductToOrder,
 } from "@/services/orders.js";
 
 export default function useOrder(id) {
@@ -12,14 +12,13 @@ export default function useOrder(id) {
   const order = ref([]);
   let products = ref([]);
 
-  const total = computed(() => {
-    return 0;
-  });
+  const total = ref(0);
 
   async function fetchOrder(table) {
     if (orderId.value) {
-      return getOrder(orderId.value).then(fetchedOrder => {
+      return getOrder(orderId.value).then((fetchedOrder) => {
         order.value = fetchedOrder.order;
+        total.value = fetchedOrder.total;
       });
     }
 
@@ -34,7 +33,7 @@ export default function useOrder(id) {
       return;
     }
 
-    const hasProduct = order.value.find(item => {
+    const hasProduct = order.value.find((item) => {
       return item.product.name === product.value.name;
     });
 
@@ -44,7 +43,7 @@ export default function useOrder(id) {
 
     return addProductToOrder(orderId.value, {
       quantity: totalQuantity,
-      product: product.value.id
+      product: product.value.id,
     });
   }
 
@@ -52,9 +51,9 @@ export default function useOrder(id) {
     order.value = order.value.map(({ quantity, product }) => {
       return {
         quantity,
-        product: products.value.find(p => {
+        product: products.value.find((p) => {
           return p.id === product;
-        })
+        }),
       };
     });
   }
@@ -73,6 +72,6 @@ export default function useOrder(id) {
     closeOrder: () => {
       closeOrder(orderId.value);
       orderId.value = null;
-    }
+    },
   };
 }
