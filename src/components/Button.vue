@@ -19,6 +19,7 @@ export default {
 </script>
 
 <style lang="postcss">
+/* purgecss start ignore */
 .button {
   @apply px-4;
   @apply rounded;
@@ -74,4 +75,5 @@ export default {
     @apply bg-red-800;
   }
 }
+/* purgecss end ignore */
 </style>

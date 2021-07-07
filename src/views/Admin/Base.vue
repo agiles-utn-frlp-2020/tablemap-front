@@ -72,9 +72,11 @@ export default {
 </script>
 
 <style>
+/* purgecss start ignore */
 .menu-item {
   @apply .flex;
   @apply .flex-col;
   @apply .items-center;
 }
+/* purgecss end ignore */
 </style>

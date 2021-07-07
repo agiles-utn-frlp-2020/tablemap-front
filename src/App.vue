@@ -3,6 +3,7 @@
 </template>
 
 <style lang="postcss">
+/* purgecss start ignore */
 @import "assets/styles/tailwind.postcss";
 
 @layer base {
@@ -39,4 +40,5 @@
     }
   }
 }
+/* purgecss end ignore */
 </style>
