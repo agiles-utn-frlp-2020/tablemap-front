@@ -4,13 +4,7 @@
     <table-map
       class="w-3/5 h-full"
       :tables="tables"
-      :to-merge="toMerge"
-      :can-move="canMove"
       @select-table="onSelectTable"
-      @move-table="onMoveTable"
-      @stop-move-table="resetTablePosition"
-      @cancel-merge="onCancelMerge"
-      @accept-merge="onAcceptMerge"
     >
     </table-map>
 
@@ -19,58 +13,97 @@
         :table="selectedTable"
         @open-table="onOpenTable"
         @close-table="onCloseTable"
-        @unmerge-table="onUnmergeTable"
       >
       </sidebar>
     </div>
+
+    <Modal :open="openModal" @close="openModal = false">
+      <template v-slot:icon>
+        <Warn></Warn>
+      </template>
+      <template v-slot:title v-if="selectedTable">
+        ¿Desea cerrar la {{ selectedTable.name }}?
+      </template>
+      <template v-slot:body>
+        <p>
+          El monto total es
+          <Price
+            :price="total"
+            :muted="false"
+            class="text-gray-900 font-bold"
+          ></Price></p
+      ></template>
+
+      <template v-slot:footer>
+        <Button class="mr-2" @click="closeTable">Cerrar mesa</Button>
+        <Button variant="outline" @click="cancelClose">Cancelar</Button>
+      </template>
+    </Modal>
   </main>
 </template>
 
 <script>
+import { ref, nextTick } from "vue";
 import TableMap from "@/components/TableMap.vue";
 import Sidebar from "@/components/Sidebar/Sidebar.vue";
 import NavBar from "@/components/NavBar.vue";
+import Modal from "@/components/Modal.vue";
+import Button from "@/components/Button.vue";
+import Price from "@/components/Price.vue";
+import Warn from "@/components/Icons/Warn.vue";
 
 import { useTables } from "@/composables/useTables.js";
+import useOrder from "@/composables/useOrder.js";
 
 export default {
-  components: { TableMap, Sidebar, NavBar },
+  components: { TableMap, Button, Modal, Warn, Price, Sidebar, NavBar },
   setup() {
     const {
       tables,
-      toMerge,
       selectedTable,
-      moveTable,
-      resetTablePosition,
       openSelectedTable,
       closeSelectedTable,
       fetchTables,
-      selectTable,
-      merge,
-      unmerge,
-      cancelMerge
+      selectTable
     } = useTables();
 
     fetchTables();
 
-    function canMove(table) {
-      return !(table.isOpen || table.mergedTables);
+    const openModal = ref(false);
+    const total = ref(0);
+
+    function onCloseTable() {
+      if (selectedTable.value.total) {
+        openModal.value = true;
+        total.value = selectedTable.value.total;
+      } else {
+        closeTable();
+      }
+    }
+
+    function cancelClose() {
+      openModal.value = false;
+    }
+
+    function closeTable() {
+      const { closeOrder } = useOrder(selectedTable.value.orderId);
+
+      closeOrder();
+      nextTick(() => closeSelectedTable());
+      openModal.value = false;
     }
 
     return {
+      openModal,
+      total: total,
       tables,
-      toMerge,
       selectedTable,
       selectTable,
       onSelectTable: selectTable,
       onOpenTable: openSelectedTable,
-      onCloseTable: closeSelectedTable,
-      onMoveTable: moveTable,
-      onAcceptMerge: merge,
-      onCancelMerge: cancelMerge,
-      onUnmergeTable: unmerge,
-      resetTablePosition,
-      canMove
+      onCloseTable: onCloseTable,
+      cancelClose: cancelClose,
+      closeTable: closeTable
     };
   }
 };

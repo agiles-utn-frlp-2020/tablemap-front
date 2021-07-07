@@ -2,7 +2,15 @@ module.exports = {
   theme: {
     fontFamily: {
       body: ["Montserrat", "sans-sans"],
-      sans: ["Montserrat", "sans-sans"]
+      sans: ["Montserrat", "sans-sans"],
+      mono: [
+        "Menlo",
+        "Monaco",
+        "Consolas",
+        "Liberation Mono",
+        "Courier New",
+        "monospace"
+      ]
     },
     extend: {
       spacing: {
@@ -26,6 +34,7 @@ module.exports = {
         }
       },
       inset: {
+        "0.5": "0.5rem",
         full: "100%"
       },
       opacity: {

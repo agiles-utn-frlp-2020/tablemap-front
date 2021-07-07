@@ -20,7 +20,7 @@
       </div>
     </div>
 
-    <form v-if="selectedTable" class="flex flex-col">
+    <div v-if="selectedTable" class="flex flex-col">
       <div class="form-group mb-3">
         <label for="name" class="mb-1">Nombre</label>
         <input
@@ -39,7 +39,7 @@
       <Button @click.prevent="deleteTable(selectedTable)" variant="danger"
         >Eliminar</Button
       >
-    </form>
+    </div>
   </div>
 </template>
 

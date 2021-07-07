@@ -7,6 +7,7 @@
       <input
         class="flex-grow-0 mr-2 h-12 p-4 w-24 rounded"
         type="number"
+        min="1"
         v-model.number="quantity"
       />
 
@@ -15,13 +16,19 @@
       >
     </div>
 
+    <p v-show="error" class="mt-2 text-red-600">{{ error }}</p>
+
     <div class="flex-grow mt-2">
       <div class="rounded-lg overflow-hidden">
         <ProductCard
           class="border-b-2"
           v-for="item in order"
-          :key="item.product.id"
           v-bind="item"
+          :show-trash="true"
+          :key="item.product.id"
+          @remove-product="removeProduct"
+          @increment="changeQuantity"
+          @decrement="changeQuantity"
         >
         </ProductCard>
       </div>
@@ -68,26 +75,66 @@ export default {
       setProducts,
       matchOrderProducts,
       addProduct,
-      closeOrder
+      removeProduct,
+      setOrderId
     } = useOrder(table.value.orderId);
 
-    watch(table, () => fetchOrder(table));
+    watch(table, () => {
+      setOrderId(table.value.orderId);
+      return getOrder();
+    });
 
     function closeTable() {
-      table.value.orderId = null; // 😱
-      closeOrder();
       ctx.emit("close-table");
     }
 
+    const error = ref("");
+
+    watch(selectedProduct, resetValidation);
+    watch(quantity, resetValidation);
+
+    function resetValidation() {
+      error.value = "";
+    }
+
+    function validate() {
+      if (!selectedProduct.value.name) {
+        error.value = "Por favor seleccione un producto";
+        return false;
+      }
+
+      if (quantity.value < 0) {
+        error.value = "La cantidad no puede ser negativa";
+        return false;
+      }
+
+      return true;
+    }
+
+    async function changeQuantity(product, quantity) {
+      await addProduct(ref(product), ref(quantity));
+      await getOrder();
+    }
+
     async function _addProduct() {
+      if (!validate()) {
+        return;
+      }
+
       await addProduct(selectedProduct, quantity);
       await getOrder();
       quantity.value = 1;
     }
 
+    async function _removeProduct(product) {
+      await removeProduct(product);
+      await getOrder();
+    }
+
     async function getOrder() {
       await fetchOrder(table);
       matchOrderProducts();
+      table.value.total = total;
     }
 
     onMounted(async () => {
@@ -103,7 +150,10 @@ export default {
       selectedProduct,
       quantity,
       total,
-      order
+      order,
+      removeProduct: _removeProduct,
+      error,
+      changeQuantity
     };
   }
 };

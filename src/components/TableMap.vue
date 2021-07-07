@@ -62,6 +62,7 @@
       ></table-board>
     </svg>
 
+    <!--TODO: cambiar por el componente modal-->
     <div
       v-if="hasMerge"
       class="absolute inset-0 flex items-center justify-center bg-gray-200 bg-opacity-75"
@@ -119,7 +120,7 @@ export default {
   props: {
     tables: { type: Array, required: true },
     toMerge: { type: Object, required: false },
-    canMove: { type: Function, required: true },
+    canMove: { type: Function, required: false, default: () => false },
     snap: { type: Boolean, required: false, default: false },
     showTableDetail: { type: Boolean, required: false, default: true },
     canAddTable: { type: Boolean, required: false, default: false }

@@ -30,6 +30,16 @@ export function addProductToOrder(orderId, product) {
   });
 }
 
+export function removeProductFromOrder(orderId, product) {
+  return fetch(`${API_URL}/orders/${orderId}/remove/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ product })
+  });
+}
+
 export function closeOrder(orderId) {
   return fetch(`${API_URL}/orders/${orderId}/`, {
     method: "PATCH",

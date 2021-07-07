@@ -59,13 +59,17 @@ export function createTable(table) {
       id: table.id,
       name: table.name,
       ...table.position
-    })
+    }),
+
+    credentials: "include"
   });
 }
 
 export function deleteTable(id) {
-  return fetch(`${API_URL}/tables/${id}`, {
-    method: "DELETE"
+  return fetch(`${API_URL}/tables/${id}/`, {
+    method: "DELETE",
+
+    credentials: "include"
   });
 }
 

@@ -5,6 +5,7 @@ import {
   createOrder,
   closeOrder,
   addProductToOrder,
+  removeProductFromOrder
 } from "@/services/orders.js";
 
 export default function useOrder(id) {
@@ -16,7 +17,7 @@ export default function useOrder(id) {
 
   async function fetchOrder(table) {
     if (orderId.value) {
-      return getOrder(orderId.value).then((fetchedOrder) => {
+      return getOrder(orderId.value).then(fetchedOrder => {
         order.value = fetchedOrder.order;
         total.value = fetchedOrder.total;
       });
@@ -33,7 +34,7 @@ export default function useOrder(id) {
       return;
     }
 
-    const hasProduct = order.value.find((item) => {
+    const hasProduct = order.value.find(item => {
       return item.product.name === product.value.name;
     });
 
@@ -43,17 +44,21 @@ export default function useOrder(id) {
 
     return addProductToOrder(orderId.value, {
       quantity: totalQuantity,
-      product: product.value.id,
+      product: product.value.id
     });
+  }
+
+  function removeProduct(product) {
+    return removeProductFromOrder(orderId.value, product.id);
   }
 
   function matchOrderProducts() {
     order.value = order.value.map(({ quantity, product }) => {
       return {
         quantity,
-        product: products.value.find((p) => {
+        product: products.value.find(p => {
           return p.id === product;
-        }),
+        })
       };
     });
   }
@@ -69,9 +74,14 @@ export default function useOrder(id) {
     setProducts,
     matchOrderProducts,
     addProduct,
+    removeProduct,
+    setOrderId: newOrderId => {
+      orderId.value = newOrderId;
+      order.value = [];
+    },
     closeOrder: () => {
       closeOrder(orderId.value);
       orderId.value = null;
-    },
+    }
   };
 }

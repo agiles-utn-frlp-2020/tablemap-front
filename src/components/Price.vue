@@ -1,7 +1,9 @@
 <template>
   <span class="tabular-nums">
     <span>$ {{ chunkedPrice.integer }}</span>
-    <span class="text-sm text-gray-600">.{{ chunkedPrice.decimal }}</span>
+    <span class="text-sm" :class="{ 'text-gray-600': muted }"
+      >.{{ chunkedPrice.decimal }}</span
+    >
   </span>
 </template>
 
@@ -9,7 +11,10 @@
 import { computed } from "vue";
 export default {
   name: "price",
-  props: ["price"],
+  props: {
+    price: { default: 0 },
+    muted: { default: true }
+  },
 
   setup(props) {
     const chunkedPrice = computed(() => {

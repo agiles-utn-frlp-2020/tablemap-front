@@ -133,6 +133,7 @@ export function useTables(
   const toggleSelectedTable = force => {
     const table = tables.value.find(t => t.isSelected);
     tables.value = toggleOpenState(table, force);
+    return table;
   };
 
   const toggleOpenState = (table, force) => {
@@ -148,7 +149,11 @@ export function useTables(
   };
 
   const openSelectedTable = toggleSelectedTable.bind(null, true);
-  const closeSelectedTable = toggleSelectedTable.bind(null, false);
+  const closeSelectedTable = () => {
+    selectedTable.value.orderId = null;
+    toggleSelectedTable(false);
+  };
+
   const findById = id => tables.value.find(table => table.id === id);
 
   const resetTablePosition = function({ id }) {

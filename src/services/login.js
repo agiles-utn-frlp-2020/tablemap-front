@@ -15,8 +15,7 @@ export function logout() {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
-    },
-    credentials: "include"
+    }
   });
 }
 
