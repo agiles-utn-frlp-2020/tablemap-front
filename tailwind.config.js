@@ -1,4 +1,7 @@
 module.exports = {
+  purge: {
+    content: ["./src/**/*.vue"]
+  },
   theme: {
     fontFamily: {
       body: ["Montserrat", "sans-sans"],
