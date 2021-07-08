@@ -75,12 +75,10 @@ export default {
       setProducts,
       matchOrderProducts,
       addProduct,
-      removeProduct,
-      setOrderId
+      removeProduct
     } = useOrder(table.value.orderId);
 
     watch(table, () => {
-      setOrderId(table.value.orderId);
       return getOrder();
     });
 
@@ -123,6 +121,8 @@ export default {
 
       await addProduct(selectedProduct, quantity);
       await getOrder();
+
+      selectedProduct.value = {};
       quantity.value = 1;
     }
 

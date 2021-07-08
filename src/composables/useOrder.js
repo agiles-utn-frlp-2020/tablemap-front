@@ -16,14 +16,16 @@ export default function useOrder(id) {
   const total = ref(0);
 
   async function fetchOrder(table) {
-    if (orderId.value) {
-      return getOrder(orderId.value).then(fetchedOrder => {
+    if (table.value.orderId) {
+      orderId.value = table.value.orderId;
+      return getOrder(table.value.orderId).then(fetchedOrder => {
         order.value = fetchedOrder.order;
         total.value = fetchedOrder.total;
       });
     }
 
     return createOrder(table.value.id).then(({ id }) => {
+      table.value.orderId = id;
       order.value = [];
       orderId.value = id;
     });
