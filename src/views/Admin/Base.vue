@@ -1,7 +1,9 @@
 <template>
   <div class="h-screen w-full flex bg-gray-200">
     <nav class="w-24 flex flex-col bg-white">
-      <Logo class="menu-item p-4 mb-4"></Logo>
+      <router-link :to="{ name: 'Home' }" class="menu-item p-4 mb-4">
+        <Logo></Logo>
+      </router-link>
 
       <router-link :to="{ name: 'AdminActivity' }" v-slot="{ isActive }">
         <div
