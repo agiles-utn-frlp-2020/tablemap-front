@@ -1,6 +1,11 @@
 <template>
   <div @click.stop="selectTable({})" @mouseup="onDrop($event)" class="relative">
-    <svg viewBox="0 0 1000 800" xmlns="http://www.w3.org/2000/svg">
+    <svg
+      viewBox="0 0 1000 800"
+      :height="height"
+      :width="width"
+      xmlns="http://www.w3.org/2000/svg"
+    >
       <defs>
         <pattern
           id="smallGrid"
@@ -98,8 +103,20 @@ export default {
     TableBoard,
     Button
   },
+  mounted() {
+    window.addEventListener("resize", this.getDimension);
+
+    this.getDimension();
+  },
+
+  unmounted() {
+    window.removeEventListener("resize", this.getDimension);
+  },
+
   data() {
     return {
+      height: 0,
+      width: 0,
       isMoved: false,
       newTable: {
         id: "nueva",
@@ -131,6 +148,15 @@ export default {
     }
   },
   methods: {
+    getDimension() {
+      this.height = 0;
+      this.width = 0;
+      this.$nextTick(() => {
+        this.height = this.$el.offsetHeight;
+        this.width = this.$el.offsetWidth;
+      });
+    },
+
     selectTable(table) {
       if (this.isMoved) {
         this.isMoved = false;

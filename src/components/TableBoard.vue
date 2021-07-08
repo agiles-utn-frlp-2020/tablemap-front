@@ -73,8 +73,8 @@ export default {
   },
   props: {
     position: { required: true, type: Object },
-    isSelected: { required: true, type: Boolean },
-    isOpen: { required: true, type: Boolean },
+    isSelected: { required: false, type: Boolean },
+    isOpen: { required: false, type: Boolean },
     name: { required: true, type: [String, Number] },
     showDetail: { required: false, type: Boolean, default: true },
     collision: {},

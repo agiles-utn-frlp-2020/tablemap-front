@@ -1,14 +1,10 @@
 <template>
   <nav-bar></nav-bar>
-  <main class="flex h-full">
-    <table-map
-      class="w-3/5 h-full"
-      :tables="tables"
-      @select-table="onSelectTable"
-    >
+  <main class="flex flex-grow">
+    <table-map class="w-3/5" :tables="tables" @select-table="onSelectTable">
     </table-map>
 
-    <div class="w-2/5 h-full bg-gray-200">
+    <div class="w-2/5 bg-gray-200">
       <sidebar
         :table="selectedTable"
         @open-table="onOpenTable"
