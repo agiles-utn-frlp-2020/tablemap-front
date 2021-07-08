@@ -43,6 +43,10 @@ module.exports = {
       },
       h: {
         80: "20rem"
+      },
+      maxHeight: {
+        "0": "0",
+        "56": "14rem"
       }
     }
   },
