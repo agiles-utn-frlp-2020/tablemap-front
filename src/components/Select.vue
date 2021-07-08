@@ -77,6 +77,7 @@
           >
             <div class="flex items-center space-x-3">
               <img
+                v-if="option.image"
                 :src="option.image"
                 class="flex-shrink-0 h-6 w-6 rounded-full"
               />
