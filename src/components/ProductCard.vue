@@ -34,7 +34,7 @@
     <div class="w-2/5 flex flex-col items-end">
       <Price :price="totalPrice" class="text-3xl normal-nums"></Price>
     </div>
-    <div class="absolute top-0.5 right-0.5" v-if="showTrash">
+    <div class="trash-icon" v-if="showTrash">
       <Trash
         width="20"
         height="20"
@@ -77,3 +77,11 @@ export default {
   }
 };
 </script>
+
+<style>
+.trash-icon {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+}
+</style>
